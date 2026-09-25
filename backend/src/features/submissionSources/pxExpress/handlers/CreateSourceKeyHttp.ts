@@ -36,7 +36,7 @@ export default class CreateSourceKeyHttp extends ExpressRoute {
 	}
 
 	public method = "post" as const;
-	public path = "/submissionsources";
+	public path = "/createkey";
 	public handler = async (req: Request, res: Response) => {
 		const parsed = schema.safeParse({
 			body: req.body,

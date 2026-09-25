@@ -53,7 +53,9 @@ export default class CreateSubmissionSourceHttp extends ExpressRoute {
 		return res.status(201).json({
 			status: "success",
 			message: "SubmissionSource created successfully",
-			data: result,
+			data: {
+				id: result.submissionSource.id
+			},
 		});
 	};
 }

@@ -48,7 +48,7 @@ export class CreateSourceKey {
 		};
 
 		const key = await this.deps.jwt.sign(payload, {
-			ttl: this.deps.clock.duration("10y"),
+			ttl: this.deps.clock.duration("9999w"),
 		});
 
 		const newKey = {

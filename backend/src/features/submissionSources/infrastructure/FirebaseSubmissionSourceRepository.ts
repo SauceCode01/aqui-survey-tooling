@@ -3,6 +3,7 @@ import { FirebaseClient } from "@/infrastructure/FirebaseClient.js";
 import { Clock } from "@/shared/time/Clock.js";
 import type { ISubmissionSourceRepository } from "../domain/ISubmissionSourceRepository.js";
 import type { SubmissionSource } from "../domain/SubmissionSource.js";
+import { AppError } from "@/errors/AppError.js";
 
 @MakeInjectable
 export class FirebaseSubmissionSourceRepository
@@ -20,7 +21,20 @@ export class FirebaseSubmissionSourceRepository
 	async GetSubmissionSourceById(input: {
 		submissionSourceId: string;
 	}): Promise<{ submissionSource: SubmissionSource }> {
-		throw new Error("not implemented");
+		const doc = await this.deps.fbClient.getDocumentById<SubmissionSource>(
+			"submissionSources",
+			input.submissionSourceId,
+		);
+		if (!doc) {
+			throw new AppError(`Submission source with id ${input.submissionSourceId} not found`, 404);
+		}
+		const submissionSource: SubmissionSource = {
+			id: doc.id,
+			name: doc.name,
+			createdAt: this.deps.clock.fromIso(doc.createdAt as unknown as string),
+			updatedAt: this.deps.clock.fromIso(doc.updatedAt as unknown as string),
+		};
+		return { submissionSource };
 	}
 
 	async ListSubmissionSources(input?: {
