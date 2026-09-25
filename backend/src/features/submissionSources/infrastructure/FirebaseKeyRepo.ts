@@ -32,7 +32,7 @@ export class FirebaseKeyRepo implements IKeyRepo {
 		if (!doc) {
 			return null;
 		}
-		const data = doc 
+		const data = doc;
 
 		// validate data
 		const schema = z.object({

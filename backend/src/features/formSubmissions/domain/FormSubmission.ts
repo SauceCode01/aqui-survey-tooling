@@ -2,10 +2,10 @@ import type { Time } from "@/shared/time/domain/Time.js";
 
 export interface QuestionGeneral {
 	question: string;
-	questionType: string; 
-} 
+	questionType: string;
+}
 
-export interface StringAnswer extends QuestionGeneral { 
+export interface StringAnswer extends QuestionGeneral {
 	answerType: "string";
 	answer: string;
 }
@@ -20,8 +20,10 @@ export interface StringArrArrAnswer extends QuestionGeneral {
 	answer: string[][];
 }
 
-export type QuestionAnswer = StringAnswer | StringArrAnswer | StringArrArrAnswer;
-
+export type QuestionAnswer =
+	| StringAnswer
+	| StringArrAnswer
+	| StringArrArrAnswer;
 
 export interface FormSubmission {
 	id: string;

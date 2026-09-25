@@ -1,9 +1,9 @@
 import { type DepsType, MakeInjectable } from "@solid-stack/di";
+import { AppError } from "@/errors/AppError.js";
 import { FirebaseClient } from "@/infrastructure/FirebaseClient.js";
 import { Clock } from "@/shared/time/Clock.js";
 import type { ISubmissionSourceRepository } from "../domain/ISubmissionSourceRepository.js";
 import type { SubmissionSource } from "../domain/SubmissionSource.js";
-import { AppError } from "@/errors/AppError.js";
 
 @MakeInjectable
 export class FirebaseSubmissionSourceRepository
@@ -26,7 +26,10 @@ export class FirebaseSubmissionSourceRepository
 			input.submissionSourceId,
 		);
 		if (!doc) {
-			throw new AppError(`Submission source with id ${input.submissionSourceId} not found`, 404);
+			throw new AppError(
+				`Submission source with id ${input.submissionSourceId} not found`,
+				404,
+			);
 		}
 		const submissionSource: SubmissionSource = {
 			id: doc.id,
