@@ -2,6 +2,7 @@ import { createHmac } from "node:crypto";
 import { type DepsType, MakeInjectable } from "@solid-stack/di";
 import { Clock } from "@/shared/time/Clock.js";
 import { Duration } from "@/shared/time/domain/Duration.js";
+import { JwtSecret } from "../dependencies/JwtSecret.js";
 import { TokenExpiredError } from "../errors/TokenExpiredError.js";
 import { TokenIntegrityError } from "../errors/TokenIntegrityError.js";
 import type { IJwtEngine } from "../ports/IJwtEngine.js";
@@ -30,12 +31,14 @@ function base64UrlDecode(str: string): string {
 export class HmacJwtEngine implements IJwtEngine {
 	public static deps = {
 		clock: Clock,
+		jwtSecret: JwtSecret,
 	};
 
-	private readonly secret: string =
-		process.env.JWT_SECRET || "default-internal-pmis-jwt-secret-key-1234567890";
+	private readonly secret: string;
 
-	constructor(public deps: DepsType<typeof HmacJwtEngine.deps>) {}
+	constructor(public deps: DepsType<typeof HmacJwtEngine.deps>) {
+		this.secret = deps.jwtSecret;
+	}
 
 	async sign(payload: unknown, ttl: Duration): Promise<string> {
 		if (!ttl || !(ttl instanceof Duration)) {

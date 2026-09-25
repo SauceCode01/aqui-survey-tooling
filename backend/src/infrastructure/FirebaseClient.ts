@@ -57,4 +57,24 @@ export class FirebaseClient {
 
 		console.log(`Document created/updated with ID: ${docId}`);
 	}
+
+	/**
+	 * Retrieve a document by its ID
+	 */
+	public async getDocumentById<T = FirebaseFirestore.DocumentData>(
+		collectionName: string,
+		docId: string,
+	): Promise<(T & { id: string }) | null> {
+		const docRef = this.db.collection(collectionName).doc(docId);
+		const docSnap = await docRef.get();
+
+		if (!docSnap.exists) {
+			return null;
+		}
+
+		return {
+			id: docSnap.id,
+			...(docSnap.data() as T),
+		};
+	}
 }

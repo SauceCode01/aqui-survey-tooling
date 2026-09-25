@@ -21,6 +21,7 @@ const createFormSubmissionHttpSchema = z.object({
 	data: z.object({
 		email: z.string(),
 		formData: z.any(),
+		sourceKey: z.string(),
 	}),
 });
 
@@ -50,6 +51,7 @@ export default class CreateFormSubmissionHttp extends ExpressRoute {
 				email: parsed.data.data.email,
 				answers: parsed.data.data.formData,
 			},
+			sourceKey: parsed.data.data.sourceKey,
 		});
 		return res.status(201).json({
 			status: "success",

@@ -1,5 +1,6 @@
 import { resolve } from "node:path";
 import dotenv from "dotenv";
+import { AppError } from "@/errors/AppError.js";
 
 export interface AppEnvironment {
 	readonly env: "dev" | "prod" | "test" | "e2e" | "sandbox";
@@ -15,6 +16,9 @@ export interface AppEnvironment {
 	};
 	readonly otp: {
 		readonly staticOtp: string;
+	};
+	readonly jwt: {
+		readonly secret: string;
 	};
 }
 
@@ -90,5 +94,12 @@ export function loadEnvironment(): AppEnvironment {
 		cli: Object.freeze({ logLevel: "info" as const }),
 		px,
 		otp: Object.freeze({ staticOtp }),
+		jwt: Object.freeze({
+			secret:
+				env.JWT_SECRET ||
+				(() => {
+					throw new AppError("JWT secret is required");
+				})(),
+		}),
 	});
 }
