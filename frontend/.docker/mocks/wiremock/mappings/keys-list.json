@@ -1,0 +1,42 @@
+{
+  "priority": 1,
+  "request": {
+    "method": "GET",
+    "urlPattern": "(/api)?/submissionSources/keys(\\?.*)?"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "status": "success",
+      "message": "SourceKeys retrieved successfully",
+      "data": {
+        "keys": [
+          {
+            "id": "key-1",
+            "submissionSourceId": "source-1",
+            "key": "sk_live_mock_wiremock_key_001",
+            "status": "ACTIVE",
+            "createdAt": "2026-09-25T10:00:00.000Z"
+          },
+          {
+            "id": "key-2",
+            "submissionSourceId": "source-1",
+            "key": "sk_live_mock_wiremock_key_002",
+            "status": "REVOKED",
+            "createdAt": "2026-09-24T08:00:00.000Z"
+          },
+          {
+            "id": "key-3",
+            "submissionSourceId": "source-2",
+            "key": "sk_live_mock_wiremock_key_003",
+            "status": "ACTIVE",
+            "createdAt": "2026-09-25T11:00:00.000Z"
+          }
+        ]
+      }
+    }
+  }
+}

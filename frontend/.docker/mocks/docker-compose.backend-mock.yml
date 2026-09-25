@@ -1,0 +1,18 @@
+services:
+  backend-mock:
+    image: wiremock/wiremock:latest
+    ports:
+      - "${BACKEND_MOCK_PORT:-8080}:8080"
+    volumes:
+      - ./wiremock/mappings:/home/wiremock/mappings:ro
+      - ./wiremock/__files:/home/wiremock/__files:ro
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/__admin/health"]
+      interval: 3s
+      timeout: 3s
+      retries: 5
+
+  app:
+    depends_on:
+      backend-mock:
+        condition: service_healthy

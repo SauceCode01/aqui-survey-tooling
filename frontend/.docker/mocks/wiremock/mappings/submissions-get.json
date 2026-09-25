@@ -1,0 +1,39 @@
+{
+  "priority": 5,
+  "request": {
+    "method": "GET",
+    "urlPattern": "(/api)?/formSubmissions/[a-zA-Z0-9_-]+(\\?.*)?"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "status": "success",
+      "message": "FormSubmission retrieved successfully",
+      "data": {
+        "formSubmission": {
+          "id": "sub-1",
+          "sourceId": "source-1",
+          "email": "sarah.connor@example.com",
+          "answers": [
+            {
+              "question": "Overall Experience",
+              "questionType": "rating",
+              "answerType": "string",
+              "answer": "5"
+            },
+            {
+              "question": "Feature Requests",
+              "questionType": "text",
+              "answerType": "string",
+              "answer": "Real-time sync and custom webhooks"
+            }
+          ],
+          "submittedAt": "2026-09-25T14:20:00.000Z"
+        }
+      }
+    }
+  }
+}

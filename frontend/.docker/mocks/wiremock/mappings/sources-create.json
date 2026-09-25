@@ -1,0 +1,20 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPattern": "(/api)?/submissionSources"
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "status": "success",
+      "message": "SubmissionSource created successfully",
+      "data": {
+        "id": "source-created-mock",
+        "name": "New Submission Source"
+      }
+    }
+  }
+}

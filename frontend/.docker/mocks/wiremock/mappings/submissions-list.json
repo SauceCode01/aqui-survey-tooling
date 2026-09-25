@@ -1,0 +1,77 @@
+{
+  "priority": 2,
+  "request": {
+    "method": "GET",
+    "urlPattern": "(/api)?/formSubmissions(\\?.*)?"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "status": "success",
+      "message": "FormSubmissions retrieved successfully",
+      "data": {
+        "formSubmissions": [
+          {
+            "id": "sub-1",
+            "sourceId": "source-1",
+            "email": "sarah.connor@example.com",
+            "answers": [
+              {
+                "question": "Overall Experience",
+                "questionType": "rating",
+                "answerType": "string",
+                "answer": "5"
+              },
+              {
+                "question": "Feature Requests",
+                "questionType": "text",
+                "answerType": "string",
+                "answer": "Real-time sync and custom webhooks"
+              }
+            ],
+            "submittedAt": "2026-09-25T14:20:00.000Z"
+          },
+          {
+            "id": "sub-2",
+            "sourceId": "source-1",
+            "email": "john.doe@example.com",
+            "answers": [
+              {
+                "question": "Overall Experience",
+                "questionType": "rating",
+                "answerType": "string",
+                "answer": "4"
+              },
+              {
+                "question": "Feature Requests",
+                "questionType": "text",
+                "answerType": "string",
+                "answer": "Export to CSV/Excel"
+              }
+            ],
+            "submittedAt": "2026-09-25T15:10:00.000Z"
+          },
+          {
+            "id": "sub-3",
+            "sourceId": "source-2",
+            "email": "employee@example.com",
+            "answers": [
+              {
+                "question": "Department",
+                "questionType": "choice",
+                "answerType": "string",
+                "answer": "Engineering"
+              }
+            ],
+            "submittedAt": "2026-09-25T16:00:00.000Z"
+          }
+        ],
+        "total": 3,
+        "limit": 10
+      }
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "priority": 2,
+  "request": {
+    "method": "GET",
+    "urlPattern": "(/api)?/submissionSources(\\?.*)?"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "status": "success",
+      "message": "SubmissionSources retrieved successfully",
+      "data": {
+        "submissionSources": [
+          {
+            "id": "source-1",
+            "name": "Customer Feedback Survey",
+            "createdAt": "2026-09-25T10:00:00.000Z",
+            "updatedAt": "2026-09-25T10:00:00.000Z"
+          },
+          {
+            "id": "source-2",
+            "name": "Employee Onboarding Form",
+            "createdAt": "2026-09-25T11:00:00.000Z",
+            "updatedAt": "2026-09-25T11:00:00.000Z"
+          }
+        ],
+        "total": 2,
+        "limit": 10
+      }
+    }
+  }
+}

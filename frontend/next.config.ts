@@ -78,6 +78,20 @@ const nextConfig: NextConfig = {
 		"127.0.0.1:3000",
 		"0.0.0.0",
 	],
+	async rewrites() {
+		const rawBackend =
+			process.env.BACKEND_INTERNAL_URL ||
+			process.env.BACKEND_URL ||
+			process.env.BACKEND_EXTERNAL_URL ||
+			"http://backend-mock:8080";
+		const backendUrl = rawBackend.replace(/\/+$/, "");
+		return [
+			{
+				source: "/api/:path*",
+				destination: `${backendUrl}/:path*`,
+			},
+		];
+	},
 };
 
 export default nextConfig;

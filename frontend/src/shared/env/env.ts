@@ -21,6 +21,13 @@ function resolveUseMocks(): string {
 		if (process.env.NODE_ENV === "test") {
 			return "true";
 		}
+		// In production or integrated infra mode, default to real API
+		if (
+			process.env.INFRA_MODE === "integrated" ||
+			process.env.NODE_ENV === "production"
+		) {
+			return "false";
+		}
 	}
 
 	// In browser, check localStorage override if user toggled in dev toolbar

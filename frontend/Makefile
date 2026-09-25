@@ -51,8 +51,8 @@ DC_PROD_CMD := docker compose --env-file $(ENV_PROD) -p $(COMPOSE_PROJECT_PROD) 
 
 # Exact clean commands matching the original behavior and specific file chains
 DC_CLEAN_DEV_CMD  := docker compose --env-file $(ENV_DEV) -p $(COMPOSE_PROJECT_DEV) -f $(DEV_COMPOSE) -f $(STANDALONE_COMPOSE)
-DC_CLEAN_TEST_CMD := docker compose --env-file $(ENV_TEST) -p $(COMPOSE_PROJECT_TEST) -f $(TEST_COMPOSE)
-DC_CLEAN_PROD_CMD := docker compose --env-file $(ENV_PROD) -p $(COMPOSE_PROJECT_PROD) -f $(PROD_COMPOSE) -f $(STANDALONE_COMPOSE)
+DC_CLEAN_TEST_CMD := docker compose --env-file $(ENV_TEST) -p $(COMPOSE_PROJECT_TEST) -f $(TEST_COMPOSE) $(MOCK_ARGS)
+DC_CLEAN_PROD_CMD := docker compose --env-file $(ENV_PROD) -p $(COMPOSE_PROJECT_PROD) -f $(PROD_COMPOSE) -f $(STANDALONE_COMPOSE) $(MOCK_ARGS)
 
 # Shared tool runners
 CONFTEST_CMD := docker run --rm -v $(CURDIR):/workspace -w /workspace openpolicyagent/conftest test

@@ -1,0 +1,19 @@
+{
+  "request": {
+    "method": "DELETE",
+    "urlPattern": "(/api)?/formSubmissions/[a-zA-Z0-9_-]+"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "status": "success",
+      "message": "FormSubmission deleted successfully",
+      "data": {
+        "success": true
+      }
+    }
+  }
+}

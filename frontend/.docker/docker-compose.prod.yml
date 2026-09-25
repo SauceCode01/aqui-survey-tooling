@@ -20,4 +20,5 @@ services:
       - ../.env.prod
     environment:
       - INFRA_MODE=integrated
+      - BACKEND_INTERNAL_URL=${BACKEND_INTERNAL_URL:-http://backend-mock:8080}
 

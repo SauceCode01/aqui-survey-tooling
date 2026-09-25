@@ -1,0 +1,20 @@
+{
+  "priority": 1,
+  "request": {
+    "method": "POST",
+    "urlPattern": "(/api)?/submissionSources/createkey"
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "status": "success",
+      "message": "SourceKey created successfully",
+      "data": {
+        "key": "sk_live_mock_wiremock_new_key_999"
+      }
+    }
+  }
+}

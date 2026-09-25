@@ -44,10 +44,19 @@ function broadcastLog(log: ApiCallLog): void {
  * In the browser, relative '/api' is used by default to route seamlessly through the Gateway.
  */
 export function getApiBaseUrl(): string {
+	const externalUrl =
+		process.env.NEXT_PUBLIC_BACKEND_EXTERNAL_URL || config.backendExternalUrl;
 	if (typeof window !== "undefined") {
+		if (
+			externalUrl &&
+			!externalUrl.includes("localhost:3000/api") &&
+			externalUrl !== "/api"
+		) {
+			return externalUrl;
+		}
 		return "/api";
 	}
-	return config.backendExternalUrl || "http://localhost:3000/api";
+	return externalUrl || "http://localhost:3000/api";
 }
 
 export interface CallOptions extends Omit<RequestInit, "signal"> {

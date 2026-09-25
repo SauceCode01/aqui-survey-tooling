@@ -1,0 +1,20 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPattern": "(/api)?/formSubmissions"
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "status": "success",
+      "message": "FormSubmission created successfully",
+      "data": {
+        "id": "sub-created-mock",
+        "email": "submitted@example.com"
+      }
+    }
+  }
+}
