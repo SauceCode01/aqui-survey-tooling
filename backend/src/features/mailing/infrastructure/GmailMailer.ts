@@ -25,22 +25,26 @@ export class GmailMailer implements IMailer {
 		body: string;
 		isHtml?: boolean | undefined;
 	}): Promise<{ ok: boolean }> {
-		// 2. Define the email options
 		const mailOptions: SendMailOptions = {
 			from: `${process.env.APP_NAME || "aqui survey app"} <${process.env.GMAIL_USER}>`,
-			to: mail.to, // Receiver's email
+			to: mail.to,
 			subject: mail.subject,
-			text: mail.body, // Plain text body
+			// Only set text if it's NOT HTML, otherwise plain-text readers see raw HTML tags
+			text: mail.isHtml ? undefined : mail.body,
+			// Only set HTML if isHtml is true
+			html: mail.isHtml ? mail.body : undefined,
 		};
 
 		try {
 			const info = await this.transporter.sendMail(mailOptions);
 			console.log("Email sent successfully!");
 			console.log("Message ID:", info.messageId);
+			return { ok: true };
 		} catch (error) {
 			console.error("Error sending email:", error);
+			// Return false if the email failed to send
+			return { ok: false };
 		}
-		return { ok: true };
 	}
 
 	getSentMails(): SentMail[] {

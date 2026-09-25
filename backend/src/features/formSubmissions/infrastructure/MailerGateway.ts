@@ -21,7 +21,7 @@ export class MailerGateway implements IMailerGateway {
 
 		await this.deps.sendEmail.execute({
 			to: process.env.ADMIN_EMAIL || "daguinotaserwin5@gmail.com",
-			subject: `New Form Submission: ${formSubmission.sourceId}`,
+			subject: `New Form Submission: ${formSubmission.email}`,
 			body: htmlBody,
 			isHtml: true,
 		});
