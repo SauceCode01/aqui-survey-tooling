@@ -1,0 +1,16 @@
+.git
+dist
+
+node_modules
+.pnpm-store
+
+.env
+.env.prod
+.env.dev
+.env.test
+.env.staging
+.env.e2e
+!.env.example
+!.env.*.example
+!*.example
+

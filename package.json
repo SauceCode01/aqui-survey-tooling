@@ -1,0 +1,62 @@
+{
+  "name": "aqui-survey-backend",
+  "version": "0.1.0",
+  "description": "Production-ready backend API service boilerplate powered by Agnos, Express, and @solid-stack/di.",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "pnpm tsx watch src/index.ts",
+    "check:types": "tsc --noEmit",
+    "check:lint": "biome check src/",
+    "check:lint:fix": "biome check --write src/",
+    "check:arch": "mason lint --complete",
+    "check:all": "pnpm check:types && pnpm check:lint && pnpm check:arch",
+    "test:unit": "vitest run --includeTaskLocation",
+    "test:e2e": "vitest run --config vitest.e2e.config.mts --includeTaskLocation",
+    "test": "pnpm check:all && pnpm test:unit",
+    "build": "pnpm tsc && pnpm tsc-alias",
+    "start": "node dist/index.js"
+  },
+  "keywords": [
+    "agnos",
+    "agnos-express",
+    "solid-stack",
+    "express",
+    "dependency-injection",
+    "clean-architecture",
+    "typescript",
+    "boilerplate",
+    "template"
+  ],
+  "author": "Solid Stack Digital",
+  "license": "UNLICENSED",
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "11.18.0",
+      "onFail": "download"
+    }
+  },
+  "type": "module",
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.14",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.5.1",
+    "@vitest/ui": "^4.1.10",
+    "tsc-alias": "^1.9.5",
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.10"
+  },
+  "dependencies": {
+    "@solid-stack/agnos": "^1.0.12",
+    "@solid-stack/agnos-express": "^1.0.3",
+    "@solid-stack/di": "^1.0.4",
+    "@solid-stack/mason": "^1.0.24",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "firebase-admin": "^14.5.0",
+    "nodemailer": "^10.0.10",
+    "vite-tsconfig-paths": "^6.1.1",
+    "zod": "^4.4.3"
+  }
+}

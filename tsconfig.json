@@ -1,0 +1,43 @@
+{
+  // Visit https://aka.ms/tsconfig to read more about this file
+  "compilerOptions": {
+    // File Layout
+    "rootDir": "./src",
+    "outDir": "./dist",
+
+    // Environment Settings
+    "target": "ES2022",
+    "module": "NodeNext",
+    "types": ["node", "vitest/globals"],
+
+    // Other Outputs
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+
+    // Stricter Typechecking Options
+    "noUncheckedIndexedAccess": true,
+    // "exactOptionalPropertyTypes": true,
+
+    // Recommended Options
+    "strict": true,
+    "jsx": "react-jsx",
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "noUncheckedSideEffectImports": true,
+    "moduleDetection": "force",
+    "skipLibCheck": true,
+
+    /* Absolute Imports and Aliases */
+    "paths": {
+      "@/*": ["./src/*"],
+      "@errors": ["./src/errors/index.ts", "./src/errors/index.js"],
+      "@errors/*": ["./src/errors/*"]
+    },
+    "moduleResolution": "NodeNext" /* Determine how modules get resolved */,
+    "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules */,
+    "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file */
+  },
+  "include": ["src/**/*"],                       /* Include all files inside the src directory */
+  "exclude": ["node_modules", "dist", "*.config.mts"]                    /* Exclude third-party dependencies */
+}

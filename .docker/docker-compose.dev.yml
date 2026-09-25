@@ -1,0 +1,13 @@
+services:
+  app:
+    extends:
+      file: ./docker-compose.yml
+      service: app
+    build:
+      target: dev
+    volumes:
+      - ..:/app 
+    env_file:
+      - ../.env.dev 
+    environment:
+      - INFRA_MODE=isolated

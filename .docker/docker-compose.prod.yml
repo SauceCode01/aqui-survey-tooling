@@ -1,0 +1,23 @@
+services:
+  app:
+    extends:
+      file: ./docker-compose.yml
+      service: app
+    build:
+      target: prod
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "8"
+    env_file:
+      - ../.env.prod
+    environment:
+      - INFRA_MODE=integrated
+
