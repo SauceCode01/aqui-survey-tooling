@@ -17,11 +17,41 @@ export interface HttpResponse<T = object> {
   data?: T;
 }
 
+const QuestionGeneralSchema = z.object({
+    question: z.string(),
+    questionType: z.string(),
+});
+
+const StringAnswerSchema = QuestionGeneralSchema.extend({
+    answerType: z.literal("string"),
+    answer: z.string(),
+});
+
+const StringArrAnswerSchema = QuestionGeneralSchema.extend({
+    answerType: z.literal("string[]"),
+    answer: z.array(z.string()),
+});
+
+const StringArrArrAnswerSchema = QuestionGeneralSchema.extend({
+    answerType: z.literal("string[][]"),
+    answer: z.array(z.array(z.string())),
+});
+
+// Use discriminatedUnion since answerType uniquely identifies the shape
+export const QuestionAnswerSchema = z.discriminatedUnion("answerType", [
+    StringAnswerSchema,
+    StringArrAnswerSchema,
+    StringArrArrAnswerSchema,
+]);
+
+// The final schema for QuestionAnswer[]
+export const QuestionAnswersArraySchema = z.array(QuestionAnswerSchema);
+
 const createFormSubmissionHttpSchema = z.object({
   body: z.object({
     data: z.object({
       email: z.string(),
-      formData: z.any(),
+      answers: QuestionAnswersArraySchema,
       sourceKey: z.string(),
     }),
   }),
@@ -53,7 +83,7 @@ export default class CreateFormSubmissionHttp extends ExpressRoute {
     const result = await this.deps.createFormSubmission.execute({
       createDto: {
         email: parsed.data.body.data.email,
-        answers: parsed.data.body.data.formData,
+        answers: parsed.data.body.data.answers,
       },
       sourceKey: parsed.data.body.data.sourceKey,
     });
