@@ -18,4 +18,6 @@ export interface KeyPayload {
 export abstract class IKeyRepo {
 	abstract saveKey(key: Key): Promise<void>;
 	abstract getKeyById(id: string): Promise<Key | null>;
+	abstract listKeys(sourceId?: string): Promise<Key[]>;
+	abstract revokeKey(id: string): Promise<void>;
 }

@@ -40,7 +40,7 @@ OVERRIDE_TEST_ARGS := $(addprefix -f ,$(OVERRIDE_TEST))
 OVERRIDE_PROD_ARGS := $(addprefix -f ,$(OVERRIDE_PROD))
 
 # Compose Argument Chains
-DC_DEV_ARGS  := -f $(BASE_COMPOSE) -f $(DEV_COMPOSE) $(OVERRIDE_DEV_ARGS)
+DC_DEV_ARGS  := -f $(BASE_COMPOSE) -f $(DEV_COMPOSE) $(MOCK_ARGS) $(OVERRIDE_DEV_ARGS)
 DC_TEST_ARGS := -f $(BASE_COMPOSE) -f $(TEST_COMPOSE) $(MOCK_ARGS) $(OVERRIDE_TEST_ARGS)
 DC_PROD_ARGS := -f $(BASE_COMPOSE) -f $(PROD_COMPOSE) $(MOCK_ARGS) $(OVERRIDE_PROD_ARGS)
 
@@ -50,9 +50,9 @@ DC_TEST_CMD := docker compose --env-file $(ENV_TEST) -p $(COMPOSE_PROJECT_TEST) 
 DC_PROD_CMD := docker compose --env-file $(ENV_PROD) -p $(COMPOSE_PROJECT_PROD) $(DC_PROD_ARGS)
 
 # Exact clean commands matching the original behavior and specific file chains
-DC_CLEAN_DEV_CMD  := docker compose --env-file $(ENV_DEV) -p $(COMPOSE_PROJECT_DEV) -f $(DEV_COMPOSE) -f $(STANDALONE_COMPOSE)
-DC_CLEAN_TEST_CMD := docker compose --env-file $(ENV_TEST) -p $(COMPOSE_PROJECT_TEST) -f $(TEST_COMPOSE)
-DC_CLEAN_PROD_CMD := docker compose --env-file $(ENV_PROD) -p $(COMPOSE_PROJECT_PROD) -f $(PROD_COMPOSE) -f $(STANDALONE_COMPOSE)
+DC_CLEAN_DEV_CMD  := docker compose --env-file $(ENV_DEV) -p $(COMPOSE_PROJECT_DEV) -f $(DEV_COMPOSE) -f $(STANDALONE_COMPOSE) $(MOCK_ARGS)
+DC_CLEAN_TEST_CMD := docker compose --env-file $(ENV_TEST) -p $(COMPOSE_PROJECT_TEST) -f $(TEST_COMPOSE) $(MOCK_ARGS)
+DC_CLEAN_PROD_CMD := docker compose --env-file $(ENV_PROD) -p $(COMPOSE_PROJECT_PROD) -f $(PROD_COMPOSE) -f $(STANDALONE_COMPOSE) $(MOCK_ARGS)
 
 # Shared tool runners
 CONFTEST_CMD := docker run --rm -v $(CURDIR):/workspace -w /workspace openpolicyagent/conftest test

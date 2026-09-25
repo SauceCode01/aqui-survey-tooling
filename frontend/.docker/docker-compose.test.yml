@@ -1,0 +1,33 @@
+services:
+  app:
+    extends:
+      file: ./docker-compose.yml
+      service: app
+    build: 
+      target: prod
+    env_file:
+      - ../.env.test
+    environment:
+      - INFRA_MODE=integrated
+
+  test-unit:
+    profiles:
+      - unit
+    build:
+      context: ..
+      target: test
+    env_file:
+      - ../.env.test 
+
+  test-e2e:
+    build:
+      context: ..
+      target: test-e2e
+    env_file:
+      - ../.env.test
+    environment: 
+      - API_URL=http://app:${PORT:-3000}
+      - BASE_URL=http://app:${PORT:-3000}
+    depends_on:
+      app:
+        condition: service_healthy

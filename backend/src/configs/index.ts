@@ -4,6 +4,8 @@ import { AppError } from "@/errors/AppError.js";
 
 export interface AppEnvironment {
 	readonly env: "dev" | "prod" | "test" | "e2e" | "sandbox";
+	readonly execMode: "dev" | "prod" | "test";
+	readonly infraMode: "isolated" | "integrated";
 	readonly px: string;
 	readonly http: {
 		readonly port: number;
@@ -24,6 +26,7 @@ export interface AppEnvironment {
 
 export function loadEnvironment(): AppEnvironment {
 	const rawEnv =
+		process.env.EXEC_MODE ??
 		process.env.ENVIRONMENT ??
 		process.env.APP_ENV ??
 		process.env.NODE_ENV ??
@@ -34,6 +37,14 @@ export function loadEnvironment(): AppEnvironment {
 			: rawEnv === "production"
 				? "prod"
 				: rawEnv;
+	const execMode =
+		normalizedEnv === "prod"
+			? "prod"
+			: normalizedEnv === "test"
+				? "test"
+				: "dev";
+	const infraMode =
+		process.env.INFRA_MODE === "integrated" ? "integrated" : "isolated";
 
 	// 0. Automatically load exactly one specific environment file
 	if (process.env.ENV_FILE) {
@@ -89,6 +100,8 @@ export function loadEnvironment(): AppEnvironment {
 
 	return Object.freeze({
 		env: normalizedEnv as AppEnvironment["env"],
+		execMode,
+		infraMode,
 		http: Object.freeze({ port }),
 		database: Object.freeze({ url: databaseUrl }),
 		cli: Object.freeze({ logLevel: "info" as const }),

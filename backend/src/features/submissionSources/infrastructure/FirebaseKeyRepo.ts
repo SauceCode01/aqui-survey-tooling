@@ -61,4 +61,32 @@ export class FirebaseKeyRepo implements IKeyRepo {
 			createdAt: this.deps.clock.fromIso(data.createdAt),
 		};
 	}
+
+	async listKeys(sourceId?: string): Promise<Key[]> {
+		let query: FirebaseFirestore.Query = this.deps.fbClient.db.collection(
+			"submissionSourceKeys",
+		);
+		if (sourceId) {
+			query = query.where("sourceId", "==", sourceId);
+		}
+		const snapshot = await query.get();
+		return snapshot.docs.map((doc) => {
+			const data = doc.data();
+			return {
+				id: doc.id,
+				sourceId: data.sourceId,
+				sourceName: data.sourceName,
+				key: data.key,
+				isValid: data.isValid,
+				createdAt: this.deps.clock.fromIso(data.createdAt as string),
+			};
+		});
+	}
+
+	async revokeKey(id: string): Promise<void> {
+		await this.deps.fbClient.db
+			.collection("submissionSourceKeys")
+			.doc(id)
+			.set({ isValid: false }, { merge: true });
+	}
 }

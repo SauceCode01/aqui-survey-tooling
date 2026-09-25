@@ -1,0 +1,21 @@
+name: test-api
+
+services:
+  test-api:
+    build:
+      context: .
+    depends_on:
+      - backend
+      - frontend
+      - gateway
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - NODE_ENV=test
+      - CI=true
+      - BACKEND_URL=http://backend:3000
+      - FRONTEND_URL=http://frontend:3000
+      - GATEWAY_URL=http://gateway:80
+      - GATEWAY_PORT=${GATEWAY_PORT:-3000}
+      - HOST_GATEWAY_URL=http://host.docker.internal:${GATEWAY_PORT:-3000}
+

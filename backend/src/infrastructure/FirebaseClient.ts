@@ -23,9 +23,27 @@ export class FirebaseClient {
 
 		// 2. Use modern modular functions instead of admin.*
 		if (!getApps().length) {
-			initializeApp({
-				credential: cert(serviceAccount),
-			});
+			if (
+				process.env.FIRESTORE_EMULATOR_HOST ||
+				process.env.FIREBASE_AUTH_EMULATOR_HOST
+			) {
+				initializeApp({
+					projectId:
+						process.env.FIREBASE_PROJECT_ID ||
+						process.env.GCP_PROJECT ||
+						"demo-test-project",
+				});
+			} else if (
+				process.env.FIREBASE_PROJECT_ID &&
+				process.env.FIREBASE_CLIENT_EMAIL &&
+				process.env.FIREBASE_PRIVATE_KEY
+			) {
+				initializeApp({
+					credential: cert(serviceAccount),
+				});
+			} else {
+				initializeApp();
+			}
 		}
 
 		// 3. Use getFirestore() and getAuth() to initialize instances

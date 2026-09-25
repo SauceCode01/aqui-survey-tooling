@@ -1,0 +1,15 @@
+services:
+  app:
+    extends:
+      file: ./docker-compose.yml
+      service: app
+    build:
+      target: dev
+    volumes:
+      - ..:/app 
+      - /app/node_modules
+      - /app/.next
+    env_file:
+      - ../.env.dev 
+    environment:
+      - INFRA_MODE=integrated

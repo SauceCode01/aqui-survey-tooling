@@ -1,0 +1,50 @@
+{
+	"name": "frontend",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"dev": "next dev",
+		"check:types": "tsc --noEmit",
+		"check:lint": "biome check src/",
+		"check:lint:fix": "biome check --write src/",
+		"check:boundaries": "node scripts/audit-deps.mjs",
+		"check:all": "pnpm check:types && pnpm check:lint && pnpm check:boundaries",  
+		"test:unit": "vitest run --includeTaskLocation",
+		"test:e2e": "playwright test",
+		"test": "pnpm check:all && pnpm test:unit", 
+		"build": "next build",
+		"start": "next start"
+	},
+	"dependencies": {
+		"@solid-stack/di": "^1.0.4",
+		"@tanstack/react-query": "^5.102.8",
+		"clsx": "^2.1.1",
+		"lucide-react": "^1.41.0",
+		"next": "16.3.3",
+		"react": "19.2.8",
+		"react-dom": "19.2.8",
+		"tailwind-merge": "^3.6.0",
+		"zod": "^4.6.5"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.5.14",
+		"@playwright/test": "^1.62.1",
+		"@tailwindcss/postcss": "^4",
+		"@testing-library/dom": "^10.4.1",
+		"@testing-library/jest-dom": "^7.0.1",
+		"@testing-library/react": "^16.3.3",
+		"@types/node": "^20",
+		"@types/react": "^19",
+		"@types/react-dom": "^19",
+		"@vitest/ui": "^4.1.11",
+		"babel-plugin-react-compiler": "1.0.0",
+		"dotenv": "^17.4.2",
+		"esbuild": "^0.28.2",
+		"jsdom": "^30.0.1",
+		"tailwindcss": "^4",
+		"typescript": "^5",
+		"vite-tsconfig-paths": "^6.1.1",
+		"vitest": "^4.1.11"
+	},
+	"packageManager": "pnpm@11.18.0"
+}

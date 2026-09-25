@@ -7,6 +7,7 @@ export abstract class IFormSubmissionRepository {
 	abstract ListFormSubmissions(input?: {
 		page?: number | undefined;
 		limit?: number | undefined;
+		sourceId?: string | undefined;
 	}): Promise<{
 		formSubmissions: FormSubmission[];
 		total?: number | undefined;

@@ -1,0 +1,9 @@
+services: 
+  app: 
+    volumes:  
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - NPM_CONFIG_CONFIRM_MODULES_PURGE=false
+      - CI=true
+      - WATCHPACK_POLLING=true

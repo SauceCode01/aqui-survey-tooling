@@ -1,0 +1,261 @@
+# =========================
+
+# Core: Node.js
+
+# =========================
+
+node_modules/
+.pnpm-store/
+.npm/
+.yarn/
+.yarn/cache/
+.yarn/unplugged/
+.yarn/build-state.yml
+.yarn/install-state.gz
+
+# Logs
+
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Runtime data
+
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage
+
+coverage/
+*.lcov
+
+# Build outputs
+
+dist/
+build/
+out/
+.next/
+.nuxt/
+.svelte-kit/
+.vercel/
+.cache/
+.tmp/
+.temp/
+
+# TypeScript
+
+*.tsbuildinfo
+
+# Environment variables (important)
+
+.env
+.env.*
+!.env.example
+!.env.*.example
+!.env.sample
+!*.example
+
+# =========================
+
+# OS-specific files
+
+# =========================
+
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.Trash-*/
+.nfs*
+
+# =========================
+
+# Editor / IDE
+
+# =========================
+
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.swp
+*.swo
+
+# =========================
+
+# Testing
+
+# =========================
+
+jest.config.js.snap
+*.snap
+
+# =========================
+
+# Docker
+
+# =========================
+
+.env.docker
+
+# =========================
+
+# Package managers
+
+# =========================
+
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# (Keep ONE lockfile — remove ignores if you commit it)
+
+# =========================
+
+# Misc archives
+
+# =========================
+
+*.tgz
+*.tar.gz
+*.zip
+
+# =========================
+
+# Debug / temp
+
+# =========================
+
+debug.log
+tmp/
+temp/
+
+# =========================
+
+# Databases / local data
+
+# =========================
+
+*.sqlite
+*.sqlite3
+*.db
+
+# =========================
+
+# Secrets / keys
+
+# =========================
+
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# =========================
+
+# Python
+
+# =========================
+
+**pycache**/
+*.py[cod]
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+
+# =========================
+
+# Java / JVM
+
+# =========================
+
+*.class
+*.jar
+*.war
+*.ear
+target/
+
+# =========================
+
+# Go
+
+# =========================
+
+bin/
+pkg/
+*.test
+
+# =========================
+
+# Rust
+
+# =========================
+
+target/
+Cargo.lock
+
+# =========================
+
+# PHP / Composer
+
+# =========================
+
+vendor/
+composer.lock
+
+# =========================
+
+# Ruby
+
+# =========================
+
+.bundle/
+vendor/bundle/
+
+# =========================
+
+# Frontend tooling
+
+# =========================
+
+storybook-static/
+dist-ssr/
+.eslintcache
+.stylelintcache
+
+# =========================
+
+# Cloud / BaaS
+
+# =========================
+
+.firebase/
+.firebaserc.local
+.supabase/
+
+# =========================
+
+# Build tools / bundlers
+
+# =========================
+
+.parcel-cache/
+.esbuild/
+.rollup.cache/

@@ -1,0 +1,12 @@
+name: gateway
+
+services:
+  gateway:
+    image: nginx:alpine
+    ports:
+      - "${GATEWAY_PORT:-3000}:80"
+    volumes:
+      - ./conf.d:/etc/nginx/conf.d:ro
+      - ./includes:/etc/nginx/includes:ro
+
+

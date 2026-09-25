@@ -5,6 +5,7 @@ import { IFormSubmissionRepository } from "../domain/IFormSubmissionRepository.j
 export type ListFormSubmissionsInput = {
 	page?: number | undefined;
 	limit?: number | undefined;
+	sourceId?: string | undefined;
 };
 
 export type ListFormSubmissionsOutput = {

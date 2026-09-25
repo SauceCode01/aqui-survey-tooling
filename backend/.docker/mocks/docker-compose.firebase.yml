@@ -1,0 +1,14 @@
+services:
+  firebase-emulator:
+    # Uses a community image or your custom Dockerfile that has Java + Firebase CLI
+    image: spine3/firebase-emulator:latest 
+    environment:
+      - GCP_PROJECT=demo-test-project
+    ports:
+      - "8080:8080" # Firestore
+      - "9099:9099" # Auth
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/"]
+      interval: 3s
+      timeout: 3s
+      retries: 5

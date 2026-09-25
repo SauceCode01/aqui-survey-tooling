@@ -1,0 +1,6 @@
+services:
+  firebase-emulator:
+    extends:
+      # Relative path goes up one level to root, then down into backend
+      file: ../backend/.docker/mocks/docker-compose.firebase.yml
+      service: firebase-emulator

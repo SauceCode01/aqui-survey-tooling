@@ -47,6 +47,7 @@ export class StubFormSubmissionRepository implements IFormSubmissionRepository {
 	async ListFormSubmissions(input?: {
 		page?: number | undefined;
 		limit?: number | undefined;
+		sourceId?: string | undefined;
 	}): Promise<{
 		formSubmissions: FormSubmission[];
 		total?: number | undefined;
@@ -55,6 +56,9 @@ export class StubFormSubmissionRepository implements IFormSubmissionRepository {
 	}> {
 		if (this.errorToThrow) throw this.errorToThrow;
 		let all = this.getFormSubmissions();
+		if (input?.sourceId) {
+			all = all.filter((s) => s.sourceId === input.sourceId);
+		}
 		const total = all.length;
 		if (input?.page && input?.limit) {
 			const start = (input.page - 1) * input.limit;

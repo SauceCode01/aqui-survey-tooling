@@ -5,9 +5,16 @@ import { ISourceGateway } from "./domain/ISourceGateway.js";
 import { FirebaseFormSubmissionRepository } from "./infrastructure/FirebaseFormSubmissionRepository.js";
 import { MailerGateway } from "./infrastructure/MailerGateway.js";
 import { SourceGateway } from "./infrastructure/SourceGateway.js";
+import { StubFormSubmissionRepository } from "./infrastructure/StubFormSubmissionRepository.js";
 
 export const FormSubmissionsProvider: DIModule = (c: Container) => {
-	c.provide(IFormSubmissionRepository, FirebaseFormSubmissionRepository);
+	const isIsolated = process.env.INFRA_MODE === "isolated";
+
+	if (isIsolated) {
+		c.provide(IFormSubmissionRepository, StubFormSubmissionRepository);
+	} else {
+		c.provide(IFormSubmissionRepository, FirebaseFormSubmissionRepository);
+	}
 
 	c.provide(IMailerGateway, MailerGateway);
 	c.provide(ISourceGateway, SourceGateway);
