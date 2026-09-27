@@ -13,32 +13,34 @@ ifeq (, $(shell command -v node 2> /dev/null))
 endif
 
 ifeq (, $(shell command -v pnpm 2> /dev/null))
-    $(error "Error: pnpm is not installed. Please install it (e.g., 'npm install -g pnpm' or via corepack).")
+    $(error "Error: pnpm is not installed. Please install it.")
 endif
 
-# Check if tsx is available in the local project (ensures dependencies are installed)
 ifeq (, $(shell pnpm exec tsx --version 2> /dev/null))
-    $(error "Error: tsx not found. You likely need to run 'pnpm install' to install project dependencies.")
+    $(error "Error: tsx not found. You likely need to run 'pnpm install'.")
 endif
 
 # ==============================================================================
 # Targets
 # ==============================================================================
 
+check-infra:
+	pnpm exec tsx scripts/ci/run-check-infra.ts
+	
 # Boots the isolated development environment with hot-reloading
-dev:
+dev: check-infra
 	pnpm exec tsx scripts/ci/run-dev.ts
 
 # Boots the production environment with dynamic local mocks
-prod:
+prod: check-infra
 	pnpm exec tsx scripts/ci/run-prod.ts
 
 # Runs fast, isolated unit tests
-test-unit:
+test-unit: check-infra
 	pnpm exec tsx scripts/ci/run-test-unit.ts
 
 # Boots the production-like environment, mocks, and runs integration/E2E tests
-test-e2e:
+test-e2e: check-infra
 	pnpm exec tsx scripts/ci/run-test-e2e.ts
 
 # The master test command (Fulfills your architectural plan)

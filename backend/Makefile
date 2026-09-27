@@ -3,4 +3,4 @@ include .make/ci.mk
 
 
 look: 
-	find .docker Dockerfile .make scripts -type f -exec tail -n +1 {} + 
+	find .docker Dockerfile .make scripts policy -type f -exec tail -n +1 {} + 
