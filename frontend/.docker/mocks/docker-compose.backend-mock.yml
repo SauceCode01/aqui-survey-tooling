@@ -1,8 +1,6 @@
 services:
   backend-mock:
-    image: wiremock/wiremock:latest
-    ports:
-      - "${BACKEND_MOCK_PORT:-8080}:8080"
+    image: wiremock/wiremock:latest 
     volumes:
       - ./wiremock/mappings:/home/wiremock/mappings:ro
       - ./wiremock/__files:/home/wiremock/__files:ro

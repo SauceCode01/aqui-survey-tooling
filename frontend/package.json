@@ -8,10 +8,10 @@
 		"check:lint": "biome check src/",
 		"check:lint:fix": "biome check --write src/",
 		"check:boundaries": "node scripts/audit-deps.mjs",
-		"check:all": "pnpm check:types && pnpm check:lint && pnpm check:boundaries",  
+		"check:all": "pnpm check:types && pnpm check:lint && pnpm check:boundaries",
 		"test:unit": "vitest run --includeTaskLocation",
 		"test:e2e": "playwright test",
-		"test": "pnpm check:all && pnpm test:unit", 
+		"test": "pnpm check:all && pnpm test:unit",
 		"build": "next build",
 		"start": "next start"
 	},
@@ -19,11 +19,13 @@
 		"@solid-stack/di": "^1.0.4",
 		"@tanstack/react-query": "^5.102.8",
 		"clsx": "^2.1.1",
+		"frontend": "link:",
 		"lucide-react": "^1.41.0",
 		"next": "16.3.3",
 		"react": "19.2.8",
 		"react-dom": "19.2.8",
 		"tailwind-merge": "^3.6.0",
+		"tsx": "^4.23.15",
 		"zod": "^4.6.5"
 	},
 	"devDependencies": {

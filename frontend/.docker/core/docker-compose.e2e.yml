@@ -1,0 +1,12 @@
+services: 
+  test-e2e:
+    build: 
+      context: ../../
+      target: test-e2e
+    env_file:
+      - ../../.env.test
+    environment: 
+      - API_URL=http://app:${PORT:-3000}
+    depends_on:
+      app:
+        condition: service_healthy
