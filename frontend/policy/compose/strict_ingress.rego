@@ -1,4 +1,4 @@
-package compose.architecture
+package main
 
 import rego.v1
 

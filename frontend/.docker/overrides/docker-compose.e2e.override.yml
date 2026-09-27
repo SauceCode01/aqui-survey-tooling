@@ -4,3 +4,4 @@ services:
       - ../../test-results:/app/test-results
     environment:
       - NODE_ENV=test
+      - BASE_URL=http://app:${PORT:-3000}

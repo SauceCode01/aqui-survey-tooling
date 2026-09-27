@@ -29,7 +29,9 @@ const sanitizeBasePath = (path?: string): string | undefined => {
 // When FRONTEND_BASE_PATH or BASE_PATH is set (e.g. by gateway/root ecosystem), use it.
 // When running standalone (e.g. `make dev` in /frontend), they are unset and it runs at root /.
 const basePath = sanitizeBasePath(
-	process.env.FRONTEND_BASE_PATH || process.env.BASE_PATH,
+	process.env.FRONTEND_BASE_PATH ||
+		process.env.BASE_PATH ||
+		process.env.NEXT_PUBLIC_BASE_PATH,
 );
 
 const defaultHostUrl = "http://localhost:3000";

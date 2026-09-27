@@ -1,4 +1,4 @@
-package compose.security
+package main
 
 import rego.v1
 

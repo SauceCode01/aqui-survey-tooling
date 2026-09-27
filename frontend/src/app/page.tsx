@@ -1,6 +1,6 @@
 "use client";
 
-import { Key, Plus, RefreshCw } from "lucide-react";
+import { Plus, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import {
@@ -37,7 +37,7 @@ export default function DashboardPage() {
 		fetchSubmissions,
 	} = useFormSubmissions();
 
-	const { keys, isLoading: keysLoading } = useSourceKeys();
+	const { keys } = useSourceKeys();
 
 	const [isCreateOpen, setIsCreateOpen] = useState(false);
 	const [activeSourceForKeys, setActiveSourceForKeys] =

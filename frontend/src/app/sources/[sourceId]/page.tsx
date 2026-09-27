@@ -1,6 +1,6 @@
 "use client";
 
-import { Key, Plus } from "lucide-react";
+import { Key } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import {

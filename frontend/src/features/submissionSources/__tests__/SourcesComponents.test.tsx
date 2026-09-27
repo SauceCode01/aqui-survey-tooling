@@ -68,10 +68,12 @@ describe("Sources Components", () => {
 	});
 
 	it("renders KeyManagementModal and allows key actions", async () => {
+		const firstSource = MOCK_SOURCES[0];
+		if (!firstSource) throw new Error("Mock source not found");
 		render(
 			<DiProvider>
 				<KeyManagementModal
-					source={MOCK_SOURCES[0]!}
+					source={firstSource}
 					isOpen={true}
 					onClose={vi.fn()}
 				/>

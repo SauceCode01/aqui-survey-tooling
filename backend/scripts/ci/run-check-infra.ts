@@ -174,7 +174,7 @@ function main() {
   if (partialFilesList.length > 0) {
     console.log(`\n🔍 3. Validating All Partial Files (${partialFilesList.length} files batched)...`);
     runCommand(
-      `docker run --rm -v "${pwd}:/project" -w /project openpolicyagent/conftest test ${partialFilesList.join(" ")} -p policy/compose/`,
+      `docker run --rm -v "${pwd}:/project" -w /project openpolicyagent/conftest test ${partialFilesList.join(" ")} -p policy/compose/ --all-namespaces`,
       { stepName: "Partial File Validation", targetFile: "One or more compose files in .docker/" },
     );
   }
@@ -227,7 +227,7 @@ function main() {
     const composeArgs = env.files.join(" ");
 
     runCommand(
-      `bash -c 'set -o pipefail && PUBLIC_PORT=3000 PORT=3000 docker compose ${composeArgs} config | docker run --rm -i -v "${pwd}:/project" -w /project openpolicyagent/conftest test - -p policy/compose/security.rego'`,
+      `bash -c 'set -o pipefail && PUBLIC_PORT=3000 PORT=3000 docker compose ${composeArgs} config | docker run --rm -i -v "${pwd}:/project" -w /project openpolicyagent/conftest test - --parser yaml -p policy/compose/security.rego --all-namespaces'`,
       {
         stepName: `Merged Architecture Validation (${env.name})`,
         targetFile: `Combined ${env.name} Stack`,
@@ -236,7 +236,7 @@ function main() {
       },
     );
   }
-
+  
   console.log("\n✅ All infrastructure and contract checks passed.");
 }
 

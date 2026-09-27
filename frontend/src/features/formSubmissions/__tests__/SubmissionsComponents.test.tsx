@@ -68,9 +68,11 @@ describe("Submissions Components", () => {
 	});
 
 	it("renders SubmissionDetailModal directly", () => {
+		const firstSubmission = MOCK_SUBMISSIONS[0];
+		if (!firstSubmission) throw new Error("Mock submission not found");
 		render(
 			<SubmissionDetailModal
-				submission={MOCK_SUBMISSIONS[0]!}
+				submission={firstSubmission}
 				isOpen={true}
 				onClose={vi.fn()}
 				sourceName="Product Survey"
