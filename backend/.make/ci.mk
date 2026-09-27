@@ -1,5 +1,29 @@
-# .make/ci.mk
 .PHONY: dev prod test-unit test-e2e test
+
+# ==============================================================================
+# Dependency Checks
+# ==============================================================================
+
+ifeq (, $(shell command -v docker 2> /dev/null))
+    $(error "Error: docker is not installed. Please install Docker Desktop first.")
+endif
+
+ifeq (, $(shell command -v node 2> /dev/null))
+    $(error "Error: node is not installed. We recommend installing it via nvm.")
+endif
+
+ifeq (, $(shell command -v pnpm 2> /dev/null))
+    $(error "Error: pnpm is not installed. Please install it (e.g., 'npm install -g pnpm' or via corepack).")
+endif
+
+# Check if tsx is available in the local project (ensures dependencies are installed)
+ifeq (, $(shell pnpm exec tsx --version 2> /dev/null))
+    $(error "Error: tsx not found. You likely need to run 'pnpm install' to install project dependencies.")
+endif
+
+# ==============================================================================
+# Targets
+# ==============================================================================
 
 # Boots the isolated development environment with hot-reloading
 dev:
