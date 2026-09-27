@@ -3,4 +3,4 @@ services:
     volumes:  
       - /app/node_modules
     environment:
-      - CI=true
+      - CI=true 
