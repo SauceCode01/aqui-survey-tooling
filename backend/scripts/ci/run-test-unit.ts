@@ -7,6 +7,20 @@ const composeFiles = [
   ...getOverride("test"),
 ];
 
+const cleanup = () => {
+  console.log(`🧹 Cleaning up Unit Test environment...`);
+  spawnSync("docker", [
+    "compose", 
+    "--env-file", ".env.test", 
+    ...composeFiles, 
+    "down", "-v"
+  ], { stdio: "inherit" });
+};
+
+// Guarantee cleanup even if the developer interrupts the process (Ctrl+C)
+process.on("SIGINT", () => { cleanup(); process.exit(1); });
+process.on("SIGTERM", () => { cleanup(); process.exit(1); });
+
 console.log(`🧪 Running Unit Tests (Isolated)...`);
 const runArgs = [
   "compose", 
@@ -14,14 +28,11 @@ const runArgs = [
   ...composeFiles, 
   "run", "--build", "--rm", "app"
 ];
-const { status } = spawnSync("docker", runArgs, { stdio: "inherit" });
 
-console.log(`🧹 Cleaning up Unit Test environment...`);
-spawnSync("docker", [
-  "compose", 
-  "--env-file", ".env.test", 
-  ...composeFiles, 
-  "down", "-v"
-], { stdio: "inherit" });
-
-process.exit(status ?? 1);
+try {
+  const { status } = spawnSync("docker", runArgs, { stdio: "inherit" });
+  // Pass the Docker exit code to the Node process so CI knows if tests failed
+  process.exitCode = status ?? 1;
+} finally {
+  cleanup();
+}

@@ -10,6 +10,20 @@ const composeFiles = [
   ...getOverride("e2e"),
 ];
 
+const cleanup = () => {
+  console.log(`🧹 Cleaning up E2E environment...`);
+  spawnSync("docker", [
+    "compose", 
+    "--env-file", ".env.test", 
+    ...composeFiles, 
+    "down", "-v"
+  ], { stdio: "inherit" });
+};
+
+// Guarantee cleanup even if the developer interrupts the process (Ctrl+C)
+process.on("SIGINT", () => { cleanup(); process.exit(1); });
+process.on("SIGTERM", () => { cleanup(); process.exit(1); });
+
 console.log(`🚀 Booting E2E Environment (App in Prod Mode + Dynamic Mocks)...`);
 const runArgs = [
   "compose", 
@@ -20,14 +34,10 @@ const runArgs = [
   "--exit-code-from", "test-e2e"
 ];
 
-const { status } = spawnSync("docker", runArgs, { stdio: "inherit" });
-
-console.log(`🧹 Cleaning up E2E environment...`);
-spawnSync("docker", [
-  "compose", 
-  "--env-file", ".env.test", 
-  ...composeFiles, 
-  "down", "-v"
-], { stdio: "inherit" });
-
-process.exit(status ?? 1);
+try {
+  const { status } = spawnSync("docker", runArgs, { stdio: "inherit" });
+  // Pass the Docker exit code to the Node process so CI knows if tests failed
+  process.exitCode = status ?? 1; 
+} finally {
+  cleanup();
+}
