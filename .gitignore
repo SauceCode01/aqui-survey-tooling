@@ -4,6 +4,8 @@
 
 # =========================
 
+.mesh
+
 node_modules/
 .pnpm-store/
 .npm/

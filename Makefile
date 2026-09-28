@@ -1,13 +1,8 @@
-.PHONY: dev prod test check-infra
 
-check-infra:
-	echo "Checking infrastructure..."
+include .make/ci.mk
 
-dev: check-infra
-	pnpm exec tsx scripts/ci/run-mesh-dev.ts
+look: 
+	find mesh.json scripts services/*/.docker -type f -exec tail -v -n +1 {} +
 
-prod: check-infra
-	pnpm exec tsx scripts/ci/run-mesh-prod.ts
-
-test: check-infra
-	pnpm exec tsx scripts/ci/run-mesh-test.ts
+kill: 
+	docker kill $$(docker ps -q)
