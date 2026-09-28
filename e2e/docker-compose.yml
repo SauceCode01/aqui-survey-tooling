@@ -1,15 +1,9 @@
-name: test-api
+name: global-e2e
 
 services:
-  test-api:
+  global-e2e:
     build:
-      context: .
-    depends_on:
-      - backend
-      - frontend
-      - gateway
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      context: . 
     environment:
       - NODE_ENV=test
       - CI=true
@@ -17,5 +11,4 @@ services:
       - FRONTEND_URL=http://frontend:3000
       - GATEWAY_URL=http://gateway:80
       - GATEWAY_PORT=${GATEWAY_PORT:-3000}
-      - HOST_GATEWAY_URL=http://host.docker.internal:${GATEWAY_PORT:-3000}
-
+      - HOST_GATEWAY_URL=http://host.docker.internal:${GATEWAY_PORT:-3000} 

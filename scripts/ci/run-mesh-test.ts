@@ -29,7 +29,7 @@ try {
   for (const serviceName of bootOrder) {
     bootService(serviceName, "prod");
   }
-
+ 
   // 3. GLOBAL E2E PLAYWRIGHT SUITE
   console.log(`\n========================================`);
   console.log(`🚦 STAGE 3: GLOBAL E2E ASSERTIONS`);
@@ -37,11 +37,13 @@ try {
   
   const { status: e2eStatus } = spawnSync("docker", [
     "compose", 
-    "-f", ".docker/docker-compose.global-e2e.yml", 
+    "-f", "e2e/docker-compose.yml", // <-- Updated path
     "up", "--build", 
     "--abort-on-container-exit", 
     "--exit-code-from", "global-e2e"
   ], { stdio: "inherit" });
+
+  process.exitCode = e2eStatus ?? 1;
 
   process.exitCode = e2eStatus ?? 1;
 
