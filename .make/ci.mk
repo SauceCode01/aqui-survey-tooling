@@ -2,27 +2,27 @@
 .PHONY: help doctor bootstrap check-infra conformance dev prod test lock
 
 help:
-	@pnpm exec tsx scripts/mesh.ts help
+	@node --import tsx scripts/mesh.ts help
 
 doctor:
-	@pnpm exec tsx scripts/mesh.ts doctor
+	@node --import tsx scripts/mesh.ts doctor
 
 bootstrap:
-	@pnpm exec tsx scripts/mesh.ts bootstrap
+	@node --import tsx scripts/mesh.ts bootstrap
 
 check-infra:
-	@pnpm exec tsx scripts/mesh.ts check
+	@node --import tsx scripts/mesh.ts check
 
 conformance: check-infra
 
 dev: check-infra
-	pnpm exec tsx scripts/ci/run-mesh-dev.ts
+	node --import tsx scripts/ci/run-mesh-dev.ts
 
 prod: check-infra
-	pnpm exec tsx scripts/ci/run-mesh-prod.ts
+	node --import tsx scripts/ci/run-mesh-prod.ts
 
 test: check-infra
-	pnpm exec tsx scripts/ci/run-mesh-test.ts
+	node --import tsx scripts/ci/run-mesh-test.ts
 
 lock:
-	@pnpm exec tsx scripts/mesh.ts lock
+	@node --import tsx scripts/mesh.ts lock

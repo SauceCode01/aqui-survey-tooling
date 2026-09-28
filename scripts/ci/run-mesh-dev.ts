@@ -10,12 +10,16 @@ import {
 let shuttingDown = false;
 
 const handleSignal = async (signal: "SIGINT" | "SIGTERM") => {
-  if (shuttingDown) return;
+  if (shuttingDown) {
+    console.log(`\n⏳ Teardown is currently in progress, waiting for Docker to finish...`);
+    return;
+  }
   shuttingDown = true;
   console.log(`\n🛑 Received ${signal}. Initiating graceful teardown...`);
   try {
     await teardownAll(currentRunCtx);
   } finally {
+    console.log(`🏁 All services and networks cleanly stopped. Exiting.\n`);
     process.exit(signal === "SIGINT" ? 130 : 143);
   }
 };

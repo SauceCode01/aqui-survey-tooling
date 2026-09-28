@@ -89,7 +89,8 @@ async function main() {
 Mesh Orchestrator CLI
 
 Usage:
-  pnpm exec tsx scripts/mesh.ts <command>
+  make <command>
+  or: node --import tsx scripts/mesh.ts <command>
 
 Commands:
   doctor        Verify prerequisites (Docker, Compose >=2.24, Node >=20, submodules, waivers)

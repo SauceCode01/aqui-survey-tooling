@@ -25,23 +25,23 @@ endif
 # ==============================================================================
 
 check-infra:
-	pnpm exec tsx scripts/ci/run-check-infra.ts
+	node --import tsx scripts/ci/run-check-infra.ts
 	
 # Boots the isolated development environment with hot-reloading
 dev: check-infra
-	pnpm exec tsx scripts/ci/run-dev.ts
+	node --import tsx scripts/ci/run-dev.ts
 
 # Boots the production environment with dynamic local mocks
 prod: check-infra
-	pnpm exec tsx scripts/ci/run-prod.ts
+	node --import tsx scripts/ci/run-prod.ts
 
 # Runs fast, isolated unit tests
 test-unit: check-infra
-	pnpm exec tsx scripts/ci/run-test-unit.ts
+	node --import tsx scripts/ci/run-test-unit.ts
 
 # Boots the production-like environment, mocks, and runs integration/E2E tests
 test-e2e: check-infra
-	pnpm exec tsx scripts/ci/run-test-e2e.ts
+	node --import tsx scripts/ci/run-test-e2e.ts
 
 # The master test command (Fulfills your architectural plan)
 # First runs unit tests. If they pass, it proceeds to spin up the E2E environment.

@@ -49,6 +49,7 @@ export interface ServiceDependency {
 export interface ServiceManifest {
   contract: number;
   name: string;
+  path?: string;
   owner: ServiceOwner;
   runtime: ServiceRuntime;
   provides: ServiceProvides;
@@ -164,6 +165,7 @@ export function runAsync(
     }
 
     const forwardSignal = (sig: NodeJS.Signals) => {
+      if (isTearingDown) return;
       try {
         child.kill(sig);
       } catch {}
@@ -230,6 +232,7 @@ export function loadServiceManifest(
   if (existsSync(manifestPath)) {
     try {
       const manifest = JSON.parse(readFileSync(manifestPath, "utf-8")) as ServiceManifest;
+      manifest.path = serviceRelativePath;
       if (manifest.contract > 1) {
         console.warn(
           `⚠️ Service [${serviceName}] declares contract version ${manifest.contract}, higher than supported (1).`
@@ -264,6 +267,7 @@ export function loadServiceManifest(
   return {
     contract: 1,
     name: serviceName,
+    path: serviceRelativePath,
     owner: { team: "unassigned", channel: "#general" },
     runtime: {
       portEnv: "PORT",
@@ -348,7 +352,8 @@ export function generateMeshOverride(
   serviceName: string,
   manifests: Record<string, ServiceManifest>,
   ctx: RunContext,
-  mode: "dev" | "prod" | "test" = "prod"
+  mode: "dev" | "prod" | "test" = "prod",
+  hasPrivateServices?: boolean
 ): string {
   const manifest = manifests[serviceName];
   const overridePath = join(ctx.overridesDir, `${serviceName}.${mode}.yml`);
@@ -371,7 +376,27 @@ export function generateMeshOverride(
   // Restart policy: in test mode, must be "no" (B12)
   const restartLine = mode === "test" ? `    restart: "no"` : "";
 
-  // Content: Keep 'default' private, attach only 'app' to 'mesh' external network with alias (B4, X11)
+  // Check if this service needs private default network (has private mocks or privateServices)
+  let needsDefaultNetwork = hasPrivateServices ?? false;
+  if (hasPrivateServices === undefined) {
+    if (manifest.privateServices && manifest.privateServices.length > 0) {
+      needsDefaultNetwork = true;
+    } else if (manifest.path) {
+      const serviceDir = resolve(process.cwd(), manifest.path);
+      const activeMocks = getLocalMocks(serviceDir, manifest);
+      needsDefaultNetwork = activeMocks.length > 0;
+    }
+  }
+
+  const networkEntries: string[] = [];
+  if (needsDefaultNetwork) {
+    networkEntries.push(`      default: {}`);
+  }
+  networkEntries.push(`      mesh:`);
+  networkEntries.push(`        aliases:`);
+  networkEntries.push(`          - ${serviceName}`);
+
+  // Content: Keep 'default' private when needed, attach only 'app' to 'mesh' external network with alias (B4, X11)
   const content = `
 services:
   app:
@@ -379,10 +404,7 @@ services:
       - com.mesh.run=${ctx.runId}
       - com.mesh.service=${serviceName}
     networks:
-      default: {}
-      mesh:
-        aliases:
-          - ${serviceName}
+${networkEntries.join("\n")}
     environment:
 ${envLines.join("\n")}
 ${restartLine ? restartLine : ""}
@@ -429,15 +451,68 @@ const activeDeployments = new Map<string, DeploymentRecord>();
 const activeLogStreams: ChildProcess[] = [];
 let isTearingDown = false;
 
+export async function cleanupStaleMeshArtifacts() {
+  try {
+    // 1. Remove all dead or stopped mesh containers from past interrupted runs
+    const stoppedResult = await runAsync(
+      "docker",
+      ["ps", "-a", "-q", "--filter", "name=mesh_", "--filter", "status=exited"],
+      { collectOutput: true }
+    );
+    const stoppedDeadResult = await runAsync(
+      "docker",
+      ["ps", "-a", "-q", "--filter", "name=mesh_", "--filter", "status=dead"],
+      { collectOutput: true }
+    );
+    const stoppedIds = Array.from(
+      new Set([
+        ...stoppedResult.stdout.trim().split(/\s+/).filter(Boolean),
+        ...stoppedDeadResult.stdout.trim().split(/\s+/).filter(Boolean),
+      ])
+    );
+    if (stoppedIds.length > 0) {
+      await runAsync("docker", ["rm", "-f", ...stoppedIds], { collectOutput: true });
+    }
+
+    // 2. Remove dangling mesh networks
+    const netsResult = await runAsync(
+      "docker",
+      ["network", "ls", "-q", "--filter", "name=mesh_"],
+      { collectOutput: true }
+    );
+    const netIds = netsResult.stdout.trim().split(/\s+/).filter(Boolean);
+    for (const netId of netIds) {
+      await runAsync("docker", ["network", "rm", netId], { collectOutput: true });
+    }
+  } catch {
+    // Best-effort cleanup
+  }
+}
+
 export async function setupMeshNetwork(ctx: RunContext) {
+  // Proactively sweep any stale/orphaned mesh artifacts from previous abruptly killed runs
+  await cleanupStaleMeshArtifacts();
+
   console.log(`🌐 Creating Global Mesh Network: ${ctx.networkName}`);
-  await runAsync("docker", [
-    "network",
-    "create",
-    "--label",
-    `com.mesh.run=${ctx.runId}`,
-    ctx.networkName,
-  ]);
+  const result = await runAsync(
+    "docker",
+    ["network", "create", "--label", `com.mesh.run=${ctx.runId}`, ctx.networkName],
+    { collectOutput: true }
+  );
+
+  if (result.status !== 0) {
+    if (result.stderr.includes("all predefined address pools have been fully subnetted")) {
+      console.error(
+        `\n💥 DOCKER ADDRESS POOL EXHAUSTION DETECTED!\n` +
+        `Docker has run out of available /16 bridge network subnets.\n` +
+        `To fix this immediately, run:\n` +
+        `   docker network prune -f\n` +
+        `Or clean up stopped containers holding onto networks with:\n` +
+        `   docker container prune -f\n`
+      );
+    }
+    throw new Error(`🚨 Failed to create mesh network [${ctx.networkName}]: ${result.stderr}`);
+  }
 }
 
 export async function teardownAll(ctx: RunContext) {
@@ -452,6 +527,7 @@ export async function teardownAll(ctx: RunContext) {
       stream.kill("SIGKILL");
     } catch {}
   }
+  activeLogStreams.length = 0;
 
   // 2. Down active Compose deployments
   for (const [name, dep] of activeDeployments.entries()) {
@@ -482,14 +558,35 @@ export async function teardownAll(ctx: RunContext) {
     ["ps", "-a", "-q", "--filter", `label=com.mesh.run=${ctx.runId}`],
     { collectOutput: true }
   );
-  const containerIds = psResult.stdout.trim().split(/\s+/).filter(Boolean);
+  const psNameResult = await runAsync(
+    "docker",
+    ["ps", "-a", "-q", "--filter", `name=${ctx.runId}`],
+    { collectOutput: true }
+  );
+  const containerIds = Array.from(
+    new Set([
+      ...psResult.stdout.trim().split(/\s+/).filter(Boolean),
+      ...psNameResult.stdout.trim().split(/\s+/).filter(Boolean),
+    ])
+  );
   if (containerIds.length > 0) {
-    await runAsync("docker", ["rm", "-f", ...containerIds]);
+    await runAsync("docker", ["rm", "-f", ...containerIds], { collectOutput: true });
   }
 
-  // 4. Remove network
+  // 4. Remove all networks created for this run (including any compose default networks)
+  const defaultNets = await runAsync(
+    "docker",
+    ["network", "ls", "-q", "--filter", `name=${ctx.runId}`],
+    { collectOutput: true }
+  );
+  const netIds = defaultNets.stdout.trim().split(/\s+/).filter(Boolean);
+  for (const nid of netIds) {
+    await runAsync("docker", ["network", "rm", nid], { collectOutput: true });
+  }
+
+  // Also remove the primary mesh network
   console.log(`   -> Removing network [${ctx.networkName}]...`);
-  await runAsync("docker", ["network", "rm", ctx.networkName]);
+  await runAsync("docker", ["network", "rm", ctx.networkName], { collectOutput: true });
 
   // 5. Clean temporary overrides directory
   if (existsSync(ctx.overridesDir)) {
@@ -564,6 +661,7 @@ export async function bootService(
     {
       cwd: serviceDir,
       inheritStdio: true,
+      collectOutput: true,
       env: {
         ...process.env,
         PORT: manifest.runtime.defaultPort.toString(),
@@ -573,6 +671,19 @@ export async function bootService(
   );
 
   if (bootResult.status !== 0) {
+    if (
+      bootResult.stderr?.includes("all predefined address pools have been fully subnetted") ||
+      bootResult.stdout?.includes("all predefined address pools have been fully subnetted")
+    ) {
+      console.error(
+        `\n💥 DOCKER ADDRESS POOL EXHAUSTION DETECTED!\n` +
+        `Docker has run out of available /16 bridge network subnets.\n` +
+        `To fix this immediately, run:\n` +
+        `   docker network prune -f\n` +
+        `Or clean up stopped containers holding onto networks with:\n` +
+        `   docker container prune -f\n`
+      );
+    }
     throw new Error(
       `🚨 Failed to boot service [${serviceName}] (exit code: ${bootResult.status}). Owner: ${manifest.owner.team} (${manifest.owner.channel || "no channel"})`
     );
@@ -616,13 +727,28 @@ export function tailLogs(
 
     activeLogStreams.push(child);
 
+    let lastContainer = "app";
+
     const formatLine = (rawLine: string): string => {
       const cleanLine = rawLine.replace(
         /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g,
         ""
       );
-      const prefix = `${color}[${serviceName}]${resetColor} `.padEnd(30 + color.length + resetColor.length);
-      return `${prefix}${cleanLine}`;
+
+      let container = lastContainer;
+      let message = cleanLine;
+
+      const match = cleanLine.match(/^([a-zA-Z0-9_\-\.]+)\s*\|\s*(.*)$/s);
+      if (match) {
+        // Strip trailing replica number (e.g. app-1 -> app, firebase-emulator-1 -> firebase-emulator)
+        container = match[1].replace(/-\d+$/, "");
+        lastContainer = container;
+        message = match[2];
+      }
+
+      const tag = `[${serviceName}:${container}]`;
+      const prefix = `${color}${tag}${resetColor} `.padEnd(32 + color.length + resetColor.length);
+      return `${prefix}${message}`;
     };
 
     if (child.stdout) {
@@ -986,6 +1112,19 @@ export async function runDoctor(): Promise<boolean> {
     console.error(`❌ Waivers: Found expired waivers:\n  ${waiverCheck.violations.join("\n  ")}`);
     ok = false;
   }
+
+  // 6. Docker Bridge Networks Capacity
+  try {
+    const netResult = await runAsync("docker", ["network", "ls", "--filter", "driver=bridge", "-q"], { collectOutput: true });
+    if (netResult.status === 0) {
+      const netCount = netResult.stdout.trim().split(/\s+/).filter(Boolean).length;
+      if (netCount >= 25) {
+        console.warn(`⚠️ Docker Bridge Networks: ${netCount}/31 subnets in use (near capacity!). Run 'docker network prune -f' to free unused subnets.`);
+      } else {
+        console.log(`✅ Docker Bridge Networks: ${netCount} active bridge networks (pool capacity: ~31).`);
+      }
+    }
+  } catch {}
 
   return ok;
 }

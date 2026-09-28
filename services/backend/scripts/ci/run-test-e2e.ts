@@ -10,20 +10,33 @@ const composeFiles = [
   ...getOverride("e2e"),
 ];
 
+let isCleaningUp = false;
+
 const cleanup = () => {
-  console.log(`🧹 Cleaning up E2E environment...`);
+  if (isCleaningUp) return;
+  isCleaningUp = true;
+  console.log(`\n🧹 Cleaning up E2E environment...`);
   spawnSync("docker", [
     "compose", 
     "--project-directory", ".",
     "--env-file", ".env.test", 
     ...composeFiles, 
-    "down", "-v"
+    "down", "-v", "--remove-orphans"
   ], { stdio: "inherit" });
+  console.log(`🏁 All containers and networks cleanly stopped.\n`);
 };
 
 // Guarantee cleanup even if the developer interrupts the process (Ctrl+C)
-process.on("SIGINT", () => { cleanup(); process.exit(1); });
-process.on("SIGTERM", () => { cleanup(); process.exit(1); });
+process.on("SIGINT", () => {
+  if (isCleaningUp) return;
+  cleanup();
+  process.exit(130);
+});
+process.on("SIGTERM", () => {
+  if (isCleaningUp) return;
+  cleanup();
+  process.exit(143);
+});
 
 console.log(`🚀 Booting E2E Environment (App in Prod Mode + Dynamic Mocks)...`);
 const runArgs = [
@@ -32,6 +45,8 @@ const runArgs = [
   "--env-file", ".env.test", 
   ...composeFiles, 
   "up", "--build", 
+  "--remove-orphans",
+  "--force-recreate",
   "--abort-on-container-exit", 
   "--exit-code-from", "test-e2e"
 ];
