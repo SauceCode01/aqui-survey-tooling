@@ -10,7 +10,7 @@
       "path": "./services/backend",
       "port": 3000,
       "replaceMocks": {
-        "docker-compose.firebase.yml": "filesystem"
+        "filesystem": "filesystem"
       },
       "envOverrides": {
         "FILESYSTEM_URL": "http://filesystem:3001"
@@ -20,7 +20,7 @@
       "path": "./services/frontend",
       "port": 8080,
       "replaceMocks": {
-        "docker-compose.mock-backend.yml": "backend"
+        "backend": "backend"
       },
       "envOverrides": {
         "BACKEND_URL": "http://backend:3000"

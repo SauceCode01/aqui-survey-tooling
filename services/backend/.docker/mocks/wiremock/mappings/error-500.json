@@ -1,0 +1,15 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/upload-fail"
+  },
+  "response": {
+    "status": 500,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "error": "Storage drive disconnected"
+    }
+  }
+}

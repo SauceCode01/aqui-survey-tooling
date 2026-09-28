@@ -1,0 +1,15 @@
+services:
+  mock-filesystem:
+    image: wiremock/wiremock:3.9.1
+    # Force WireMock to listen on 3001 instead of its default 8080
+    command: ["--port", "3001"]
+    volumes:
+      # Mounts the local mapping files into the container's expected directory
+      - ./.docker/mocks/wiremock/filesystem:/home/wiremock
+    # No ports mapped to the host! Strict internal isolation.
+    healthcheck:
+      # WireMock containers have curl pre-installed
+      test: ["CMD", "curl", "-s", "-f", "http://localhost:3001/__admin/docs/"]
+      interval: 2s
+      timeout: 2s
+      retries: 5
