@@ -1,21 +1,32 @@
+// scripts/ci/run-mesh-prod.ts
 import { setupMeshNetwork, teardownAll, getBootOrder, bootService, tailLogs } from "./mesh-utils.js";
 
-process.on("SIGINT", () => { teardownAll(); process.exit(1); });
-process.on("SIGTERM", () => { teardownAll(); process.exit(1); });
+const handleShutdown = () => {
+  teardownAll();
+  process.exit(0);
+};
+
+// Intercept Ctrl+C to trigger graceful nuclear teardown
+process.on("SIGINT", handleShutdown);
+process.on("SIGTERM", handleShutdown);
 
 try {
   setupMeshNetwork();
   
   const bootOrder = getBootOrder();
+  
   for (const serviceName of bootOrder) {
+    // Passes "prod" so Docker builds using the 'prod' Dockerfile target 
+    // and loads the .env.prod configuration files
     bootService(serviceName, "prod");
   }
 
-  console.log(`\n🚀 Global Production Environment Online.`);
-  tailLogs();
+  console.log(`\n🚀 Global Production Environment Online. Streaming logs...`);
+  console.log(`(Press Ctrl+C to safely stop and tear down all containers)\n`);
+  
+  tailLogs(); 
 
 } catch (err) {
   console.error(err);
-  teardownAll();
-  process.exit(1);
+  handleShutdown();
 }
