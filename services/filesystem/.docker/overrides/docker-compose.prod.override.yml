@@ -2,8 +2,3 @@ services:
   app:  
     environment:
       - CI=true
-      - FIRESTORE_EMULATOR_HOST=firebase-emulator:8080
-      - FIREBASE_AUTH_EMULATOR_HOST=firebase-emulator:9099
-    depends_on:
-      firebase-emulator:
-        condition: service_healthy

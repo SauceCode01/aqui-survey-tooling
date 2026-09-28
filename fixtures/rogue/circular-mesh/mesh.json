@@ -1,0 +1,7 @@
+{
+  "contract": 1,
+  "services": {
+    "circ-a": { "path": "./circ-a" },
+    "circ-b": { "path": "./circ-b" }
+  }
+}

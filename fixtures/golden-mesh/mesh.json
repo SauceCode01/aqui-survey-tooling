@@ -1,0 +1,8 @@
+{
+  "contract": 1,
+  "services": {
+    "svc-a": { "path": "./svc-a" },
+    "svc-b": { "path": "./svc-b" },
+    "svc-c": { "path": "./svc-c" }
+  }
+}

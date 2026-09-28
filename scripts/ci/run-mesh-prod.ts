@@ -1,32 +1,48 @@
-// scripts/ci/run-mesh-prod.ts
-import { setupMeshNetwork, teardownAll, getBootOrder, bootService, tailLogs } from "./mesh-utils.js";
+import {
+  setupMeshNetwork,
+  teardownAll,
+  getBootOrder,
+  bootService,
+  tailLogs,
+  currentRunCtx,
+} from "./mesh-utils.js";
 
-const handleShutdown = () => {
-  teardownAll();
-  process.exit(0);
+let shuttingDown = false;
+
+const handleSignal = async (signal: "SIGINT" | "SIGTERM") => {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  console.log(`\n🛑 Received ${signal}. Initiating graceful teardown...`);
+  try {
+    await teardownAll(currentRunCtx);
+  } finally {
+    process.exit(signal === "SIGINT" ? 130 : 143);
+  }
 };
 
-// Intercept Ctrl+C to trigger graceful nuclear teardown
-process.on("SIGINT", handleShutdown);
-process.on("SIGTERM", handleShutdown);
+process.on("SIGINT", () => handleSignal("SIGINT"));
+process.on("SIGTERM", () => handleSignal("SIGTERM"));
 
-try {
-  setupMeshNetwork();
-  
-  const bootOrder = getBootOrder();
-  
-  for (const serviceName of bootOrder) {
-    // Passes "prod" so Docker builds using the 'prod' Dockerfile target 
-    // and loads the .env.prod configuration files
-    bootService(serviceName, "prod");
+async function main() {
+  try {
+    await setupMeshNetwork(currentRunCtx);
+
+    const bootOrder = getBootOrder();
+
+    for (const serviceName of bootOrder) {
+      await bootService(serviceName, "prod", currentRunCtx);
+    }
+
+    console.log(`\n🚀 Global Production Environment Online. Streaming logs...`);
+    console.log(`(Press Ctrl+C to safely stop and tear down all containers)\n`);
+
+    tailLogs(currentRunCtx);
+  } catch (err: any) {
+    console.error(`🚨 Fatal Prod Mesh Error: ${err.message || err}`);
+    process.exitCode = 1;
+    await teardownAll(currentRunCtx);
+    process.exit(1);
   }
-
-  console.log(`\n🚀 Global Production Environment Online. Streaming logs...`);
-  console.log(`(Press Ctrl+C to safely stop and tear down all containers)\n`);
-  
-  tailLogs(); 
-
-} catch (err) {
-  console.error(err);
-  handleShutdown();
 }
+
+main();

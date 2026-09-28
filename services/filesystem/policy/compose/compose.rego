@@ -2,6 +2,9 @@ package main
 
 import rego.v1
 
+volume_source(v) := v.source if is_object(v)
+volume_source(v) := split(v, ":")[0] if is_string(v)
+
 # ---------------------------------------------------------------------------
 # HELPER: Extract all services dynamically from any compose file
 # ---------------------------------------------------------------------------
@@ -14,11 +17,8 @@ services[name] := config if {
 # ---------------------------------------------------------------------------
 deny contains msg if {
     some name, config in services
-    
-    # If the 'ports' array exists and has at least 1 item
     ports := config.ports
     count(ports) > 0
-    
     msg := sprintf("❌ Architecture Violation: Service '%v' maps ports directly. Ingress ports must ONLY exist in docker-compose.standalone.yml", [name])
 }
 
@@ -27,9 +27,7 @@ deny contains msg if {
 # ---------------------------------------------------------------------------
 deny contains msg if {
     some name, config in services
-    
     config.privileged == true
-    
     msg := sprintf("❌ Security Violation: Service '%v' uses 'privileged: true'. This grants root access to the host machine.", [name])
 }
 
@@ -38,9 +36,7 @@ deny contains msg if {
 # ---------------------------------------------------------------------------
 deny contains msg if {
     some name, config in services
-    
     config.network_mode == "host"
-    
     msg := sprintf("❌ Security Violation: Service '%v' uses 'network_mode: host'. Must use isolated Docker bridge networks.", [name])
 }
 
@@ -50,9 +46,7 @@ deny contains msg if {
 deny contains msg if {
     some name, config in services
     some volume in config.volumes
-    
-    # Prevent mounting the root filesystem of the host machine into the container
-    startswith(volume, "/:")
-    
+    src := volume_source(volume)
+    src == "/"
     msg := sprintf("❌ Security Violation: Service '%v' mounts the host's root directory (/).", [name])
 }

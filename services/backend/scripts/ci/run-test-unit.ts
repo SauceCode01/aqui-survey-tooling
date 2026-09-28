@@ -11,6 +11,7 @@ const cleanup = () => {
   console.log(`🧹 Cleaning up Unit Test environment...`);
   spawnSync("docker", [
     "compose", 
+    "--project-directory", ".",
     "--env-file", ".env.test", 
     ...composeFiles, 
     "down", "-v"
@@ -24,9 +25,10 @@ process.on("SIGTERM", () => { cleanup(); process.exit(1); });
 console.log(`🧪 Running Unit Tests (Isolated)...`);
 const runArgs = [
   "compose", 
+  "--project-directory", ".",
   "--env-file", ".env.test", 
   ...composeFiles, 
-  "run", "--build", "--rm", "app"
+  "run", "--build", "--rm", "test-unit"
 ];
 
 try {

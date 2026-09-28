@@ -1,12 +1,19 @@
-services: 
+services:
+  app:
+    environment:
+      - BACKEND_URL=http://backend-mock:8080
+      - NEXT_PUBLIC_BACKEND_EXTERNAL_URL=http://backend-mock:8080
   test-e2e:
     build: 
-      context: ../../
+      context: .
       target: test-e2e
     env_file:
-      - ../../.env.test
+      - path: .env.test
+        required: false
     environment: 
+      - BASE_URL=http://app:${PORT:-3000}
       - API_URL=http://app:${PORT:-3000}
+    restart: "no"
     depends_on:
       app:
         condition: service_healthy

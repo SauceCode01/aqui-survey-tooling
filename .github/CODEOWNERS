@@ -1,0 +1,20 @@
+# Platform Orchestration and Governance
+*                       @org/platform-team
+
+# Mesh Root Files
+/mesh.json              @org/platform-team
+/mesh.lock.json         @org/platform-team
+/mesh.waivers.json      @org/platform-team
+/Makefile               @org/platform-team
+/.make/                 @org/platform-team
+/scripts/               @org/platform-team
+/policy/                @org/platform-team
+/docs/                  @org/platform-team
+
+# Global E2E Suite (Shared)
+/e2e/                   @org/platform-team @org/qa-team
+
+# Service Ownership
+/services/backend/      @org/api-team
+/services/frontend/     @org/web-team
+/services/filesystem/   @org/storage-team

@@ -1,7 +1,7 @@
-services: 
+services:  
   test-e2e: 
     volumes:
-      - ../../test-results:/app/test-results
+      - ./test-results:/app/test-results
     environment:
       - NODE_ENV=test
       - BASE_URL=http://app:${PORT:-3000}

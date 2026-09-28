@@ -227,7 +227,7 @@ function main() {
     const composeArgs = env.files.join(" ");
 
     runCommand(
-      `bash -c 'set -o pipefail && PUBLIC_PORT=3000 PORT=3000 docker compose ${composeArgs} config | docker run --rm -i -v "${pwd}:/project" -w /project openpolicyagent/conftest test - --parser yaml -p policy/compose/security.rego --all-namespaces'`,
+      `bash -c 'set -o pipefail && PUBLIC_PORT=3000 PORT=3000 docker compose --project-directory . ${composeArgs} config | docker run --rm -i -v "${pwd}:/project" -w /project openpolicyagent/conftest test - --parser yaml -p policy/compose/security.rego --all-namespaces'`,
       {
         stepName: `Merged Architecture Validation (${env.name})`,
         targetFile: `Combined ${env.name} Stack`,

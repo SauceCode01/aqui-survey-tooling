@@ -43,8 +43,8 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
-USER node
+USER 1000:1000
 HEALTHCHECK --interval=2s --timeout=2s --start-period=3s --retries=10 \
-  CMD node -e "require('net').connect(${PORT:-3000}, '127.0.0.1').on('connect', () => process.exit(0)).on('error', () => process.exit(1))"
+  CMD ["node", "-e", "require('net').connect(process.env.PORT || 3000, '127.0.0.1').on('connect', () => process.exit(0)).on('error', () => process.exit(1))"]
 
 CMD ["node", "server.js"]

@@ -1,0 +1,50 @@
+{
+  "contract": 1,
+  "name": "frontend",
+  "owner": {
+    "team": "web",
+    "channel": "#web-oncall",
+    "codeowners": "@org/web-team"
+  },
+  "runtime": {
+    "portEnv": "PORT",
+    "defaultPort": 8080,
+    "health": {
+      "path": "/api/health",
+      "startPeriod": "15s"
+    }
+  },
+  "provides": {
+    "api": "frontend-web",
+    "version": "1.0.0"
+  },
+  "dependencies": {
+    "backend": {
+      "api": "backend-api",
+      "range": "^1.0.0",
+      "urlEnv": "BACKEND_URL",
+      "mock": {
+        "service": "backend-mock"
+      }
+    }
+  },
+  "privateServices": [],
+  "env": {
+    "required": [
+      "PORT"
+    ],
+    "buildArgs": []
+  },
+  "compose": {
+    "base": ".docker/core/docker-compose.base.yml",
+    "dev": ".docker/core/docker-compose.dev.yml",
+    "prod": ".docker/core/docker-compose.prod.yml",
+    "test": ".docker/core/docker-compose.test.yml",
+    "standalone": ".docker/core/docker-compose.standalone.yml"
+  },
+  "commands": {
+    "check": "make check-infra",
+    "test": "make test",
+    "extensionCheck": "node scripts/audit-deps.mjs"
+  }
+}

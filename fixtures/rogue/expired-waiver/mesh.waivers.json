@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "waivers": [
+    {
+      "rule": "no_docker_sock",
+      "reason": "Temporary debugging waiver for legacy worker",
+      "approver": "@security-lead",
+      "expiresAt": "2020-01-01T00:00:00.000Z"
+    }
+  ]
+}

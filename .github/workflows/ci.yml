@@ -1,0 +1,54 @@
+name: Mesh CI & Verification
+
+on:
+  push:
+    branches:
+      - main
+      - feat/*
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  conformance-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Node & Corepack
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install pnpm
+        run: corepack enable
+
+      - name: Install Root Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Doctor & Preflight
+        run: pnpm run mesh doctor
+
+      - name: Platform Conformance Suite
+        run: pnpm run mesh check
+
+      - name: Guardrails Unit Tests
+        run: pnpm run test
+
+      - name: Full Mesh Integration Test (Stages 1-3)
+        run: pnpm exec tsx scripts/ci/run-mesh-test.ts
+
+      - name: Verify or Update Lockfile
+        if: github.ref == 'refs/heads/main'
+        run: |
+          pnpm run mesh lock
+          if [ -n "$(git status --porcelain mesh.lock.json)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add mesh.lock.json
+            git commit -m "chore: update mesh.lock.json [skip ci]"
+            git push
+          fi

@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "generatedAt": "2026-09-28T08:00:00.000Z",
+  "services": {
+    "filesystem": {
+      "contract": 1,
+      "version": "1.0.0",
+      "sha": "HEAD",
+      "verified": true
+    },
+    "backend": {
+      "contract": 1,
+      "version": "1.0.0",
+      "sha": "HEAD",
+      "verified": true
+    },
+    "frontend": {
+      "contract": 1,
+      "version": "1.0.0",
+      "sha": "HEAD",
+      "verified": true
+    }
+  }
+}

@@ -1,6 +1,8 @@
 package main
-
 import rego.v1
+
+volume_source(v) := v.source if is_object(v)
+volume_source(v) := split(v, ":")[0] if is_string(v)
 
 services[name] := config if {
     some name, config in input.services
@@ -24,7 +26,8 @@ deny contains msg if {
 deny contains msg if {
     some name, config in services
     some volume in config.volumes
-    startswith(volume, "/:")
+    src := volume_source(volume)
+    src == "/"
     msg := sprintf("❌ Security Violation: Service '%v' mounts the host's root directory (/).", [name])
 }
 
@@ -32,6 +35,7 @@ deny contains msg if {
 deny contains msg if {
     some name, config in services
     some volume in config.volumes
-    contains(volume, "/var/run/docker.sock")
+    src := volume_source(volume)
+    contains(src, "/var/run/docker.sock")
     msg := sprintf("❌ Security Violation: Service '%v' mounts the Docker socket.", [name])
 }

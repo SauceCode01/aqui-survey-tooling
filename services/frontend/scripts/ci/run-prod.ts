@@ -12,6 +12,7 @@ const composeFiles = [
 console.log(`🚀 Starting Production Environment (with Dynamic Mocks)...`);
 const { status } = spawnSync("docker", [
   "compose", 
+  "--project-directory", ".",
   "--env-file", ".env.prod", 
   ...composeFiles, 
   "up", "--build"

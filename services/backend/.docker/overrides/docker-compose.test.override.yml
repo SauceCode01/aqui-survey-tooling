@@ -1,4 +1,4 @@
-services: 
-  app: 
+services:  
+  test-unit: 
     volumes:
-      - ../../test-results:/app/test-results
+      - ./test-results:/app/test-results

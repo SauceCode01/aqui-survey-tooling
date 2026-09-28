@@ -1,11 +1,13 @@
 services:
   app: 
     build:
+      context: .
       target: dev
     env_file:
-      - ../../.env.dev 
+      - path: .env.dev
+        required: false
     volumes:
-      - ../..:/app
+      - .:/app
     environment:
       - INFRA_MODE=isolated
       - EXEC_MODE=dev

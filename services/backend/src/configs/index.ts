@@ -1,4 +1,6 @@
-import { resolve } from "node:path";
+import { existsSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import dotenv from "dotenv";
 import { AppError } from "@/errors/AppError.js";
 
@@ -47,18 +49,44 @@ export function loadEnvironment(): AppEnvironment {
 		process.env.INFRA_MODE === "integrated" ? "integrated" : "isolated";
 
 	// 0. Automatically load exactly one specific environment file
-	if (process.env.ENV_FILE) {
-		dotenv.config({ path: resolve(process.cwd(), process.env.ENV_FILE) });
-	} else if (normalizedEnv === "dev") {
-		dotenv.config({ path: resolve(process.cwd(), ".env.dev") });
-	} else if (normalizedEnv === "test") {
-		dotenv.config({ path: resolve(process.cwd(), ".env.test") });
-	} else if (normalizedEnv === "e2e" || normalizedEnv === "sandbox") {
-		dotenv.config({ path: resolve(process.cwd(), ".env.e2e") });
-	} else if (normalizedEnv === "prod") {
-		dotenv.config({ path: resolve(process.cwd(), ".env.prod") });
+	const envFileName = process.env.ENV_FILE
+		? process.env.ENV_FILE
+		: normalizedEnv === "dev"
+			? ".env.dev"
+			: normalizedEnv === "test"
+				? ".env.test"
+				: normalizedEnv === "e2e" || normalizedEnv === "sandbox"
+					? ".env.e2e"
+					: normalizedEnv === "prod"
+						? ".env.prod"
+						: ".env";
+
+	const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
+	const cwdPath = resolve(process.cwd(), envFileName);
+	const packagePath = resolve(packageRoot, envFileName);
+
+	if (existsSync(cwdPath)) {
+		dotenv.config({ path: cwdPath });
+	} else if (existsSync(packagePath)) {
+		dotenv.config({ path: packagePath });
 	} else {
-		dotenv.config({ path: resolve(process.cwd(), ".env") });
+		for (const fallback of [
+			".env",
+			".env.dev",
+			".env.test",
+			".env.prod",
+			".env.e2e",
+		]) {
+			const candidateInCwd = resolve(process.cwd(), fallback);
+			const candidateInPkg = resolve(packageRoot, fallback);
+			if (existsSync(candidateInCwd)) {
+				dotenv.config({ path: candidateInCwd });
+				break;
+			} else if (existsSync(candidateInPkg)) {
+				dotenv.config({ path: candidateInPkg });
+				break;
+			}
+		}
 	}
 
 	const env: Record<string, string | undefined> = process.env;

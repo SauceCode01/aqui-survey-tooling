@@ -3,7 +3,8 @@ services:
     build:
       target: prod
     env_file:
-      - ../../.env.prod
+      - path: .env.prod
+        required: false
     environment:
       - INFRA_MODE=integrated 
       - EXEC_MODE=prod
@@ -18,4 +19,3 @@ services:
       options:
         max-size: "10m"
         max-file: "8"
-

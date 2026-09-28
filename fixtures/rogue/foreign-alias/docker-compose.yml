@@ -1,0 +1,10 @@
+services:
+  app:
+    image: alpine:latest
+    networks:
+      mesh:
+        aliases:
+          - unauthorized-backend
+networks:
+  mesh:
+    external: true

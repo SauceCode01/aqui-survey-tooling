@@ -14,6 +14,7 @@ const cleanup = () => {
   console.log(`🧹 Cleaning up E2E environment...`);
   spawnSync("docker", [
     "compose", 
+    "--project-directory", ".",
     "--env-file", ".env.test", 
     ...composeFiles, 
     "down", "-v"
@@ -27,6 +28,7 @@ process.on("SIGTERM", () => { cleanup(); process.exit(1); });
 console.log(`🚀 Booting E2E Environment (App in Prod Mode + Dynamic Mocks)...`);
 const runArgs = [
   "compose", 
+  "--project-directory", ".",
   "--env-file", ".env.test", 
   ...composeFiles, 
   "up", "--build", 

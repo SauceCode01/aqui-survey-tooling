@@ -1,0 +1,40 @@
+{
+  "contract": 1,
+  "name": "filesystem",
+  "owner": {
+    "team": "storage",
+    "channel": "#storage-oncall",
+    "codeowners": "@org/storage-team"
+  },
+  "runtime": {
+    "portEnv": "PORT",
+    "defaultPort": 3001,
+    "health": {
+      "path": "/",
+      "startPeriod": "5s"
+    }
+  },
+  "provides": {
+    "api": "filesystem-api",
+    "version": "1.0.0"
+  },
+  "dependencies": {},
+  "privateServices": [],
+  "env": {
+    "required": [
+      "PORT"
+    ],
+    "buildArgs": []
+  },
+  "compose": {
+    "base": ".docker/core/docker-compose.base.yml",
+    "dev": ".docker/core/docker-compose.dev.yml",
+    "prod": ".docker/core/docker-compose.prod.yml",
+    "test": ".docker/core/docker-compose.test.yml",
+    "standalone": ".docker/core/docker-compose.standalone.yml"
+  },
+  "commands": {
+    "check": "make check-infra",
+    "test": "make test"
+  }
+}

@@ -1,12 +1,14 @@
 services: 
   test-e2e:
     build: 
-      context: ../../
+      context: .
       target: test-e2e
     env_file:
-      - ../../.env.test
+      - path: .env.test
+        required: false
     environment: 
-      - API_URL=http://app:${PORT:-3000}
+      - API_URL=http://app:${PORT:-3001}
+    restart: "no"
     depends_on:
       app:
         condition: service_healthy

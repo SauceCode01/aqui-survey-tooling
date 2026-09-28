@@ -1,0 +1,50 @@
+name: Mesh Verify (Reusable PR Gate)
+
+on:
+  workflow_call:
+    inputs:
+      service:
+        required: true
+        type: string
+        description: "Name of the service being tested"
+      ref:
+        required: true
+        type: string
+        description: "Git ref or commit SHA of the service PR"
+
+jobs:
+  mesh-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Root Orchestrator
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Node & Corepack
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install pnpm
+        run: corepack enable
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Substitute Service Ref
+        run: |
+          echo "Substituting ${{ inputs.service }} with ref ${{ inputs.ref }}..."
+          cd services/${{ inputs.service }}
+          git fetch origin ${{ inputs.ref }}
+          git checkout ${{ inputs.ref }}
+          cd ../..
+
+      - name: Run Doctor & Preflight
+        run: pnpm run mesh doctor
+
+      - name: Conformance & Policy Gate
+        run: pnpm run mesh check
+
+      - name: Run Mesh Integration Test
+        run: pnpm exec tsx scripts/ci/run-mesh-test.ts

@@ -1,0 +1,15 @@
+{
+  "contract": 1,
+  "name": "svc-b",
+  "owner": { "team": "team-b", "channel": "#team-b" },
+  "runtime": { "portEnv": "PORT", "defaultPort": 4002, "health": { "path": "/health" } },
+  "provides": { "api": "api-b", "version": "1.0.0" },
+  "dependencies": {
+    "svc-a": {
+      "api": "api-a",
+      "range": "^1.0.0",
+      "urlEnv": "SVC_A_URL"
+    }
+  },
+  "commands": { "check": "echo ok", "test": "echo ok" }
+}

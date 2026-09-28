@@ -1,0 +1,10 @@
+{
+  "contract": 1,
+  "name": "circ-a",
+  "owner": { "team": "circ" },
+  "runtime": { "defaultPort": 5001, "health": { "path": "/" } },
+  "provides": { "api": "circ-a", "version": "1.0.0" },
+  "dependencies": {
+    "circ-b": { "api": "circ-b", "range": "^1.0.0", "urlEnv": "CIRC_B_URL" }
+  }
+}

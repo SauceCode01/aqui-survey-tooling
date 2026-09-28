@@ -10,16 +10,12 @@ describe("Backend API E2E Suite (via Gateway Instance)", () => {
 		console.log(`Testing Backend API:`);
 		console.log(`========================================\n`);
 
-		await waitForService(
-			`${process.env.BACKEND_URL}/health`,
-			"Backend API",
-			30000,
-		);
+		await waitForService(`${env.backendUrl}/health`, "Backend API", 30000);
 	});
 
 	describe("Backend Health Check", () => {
 		it("GET /api/health through Gateway returns healthy status", async () => {
-			const res = await fetch(`${process.env.BACKEND_URL}/health`);
+			const res = await fetch(`${env.backendUrl}/health`);
 			expect(res.status).toBe(200);
 
 			const contentType = res.headers.get("content-type") || "";

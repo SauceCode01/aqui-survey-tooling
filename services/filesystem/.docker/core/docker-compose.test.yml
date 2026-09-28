@@ -1,10 +1,12 @@
-services: 
-  app: 
+services:
+  test-unit:
     build: 
+      context: .
       target: test
     env_file:
-      - ../../.env.test 
+      - path: .env.test
+        required: false
     environment:
-      - INFRA_MODE=isolated
-      - EXEC_MODE=test
- 
+      - NODE_ENV=test
+      - CI=true
+    restart: "no"
