@@ -1,0 +1,14 @@
+
+services:
+  app:
+    networks:
+      default:
+        aliases:
+          - frontend
+    environment:
+      - INFRA_MODE=integrated
+      - BACKEND_URL=http://backend:3000
+networks:
+  default:
+    name: global_mesh
+    external: true

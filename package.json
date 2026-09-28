@@ -1,0 +1,23 @@
+{
+  "name": "aqui-survey-root",
+  "version": "0.1.0",
+  "description": "Production-ready backend API service boilerplate powered by Agnos, Express, and @solid-stack/di.", 
+ 
+  "license": "UNLICENSED",
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "11.18.0",
+      "onFail": "download"
+    }
+  },
+  "type": "module",
+  "devDependencies": { 
+    "@types/node": "^26.5.1",  
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2" 
+  },
+  "dependencies": { 
+    "dotenv": "^17.4.2"  
+  }
+}

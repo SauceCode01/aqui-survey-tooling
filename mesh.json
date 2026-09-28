@@ -1,0 +1,20 @@
+{
+  "services": { 
+    "backend": {
+      "path": "./services/backend",
+      "port": 3000,
+      "dependsOn": [],
+      "envOverrides": {
+        "FILESYSTEM_URL": "http://filesystem:3001"
+      }
+    },
+    "frontend": {
+      "path": "./services/frontend",
+      "port": 8080,
+      "dependsOn": ["backend"],
+      "envOverrides": {
+        "BACKEND_URL": "http://backend:3000"
+      }
+    }
+  }
+}

@@ -1,0 +1,13 @@
+services:
+  global-e2e:
+    build:
+      context: ../
+      dockerfile: e2e.Dockerfile
+    networks:
+      - global_mesh
+    environment:
+      - TARGET_URL=http://frontend:8080 
+
+networks:
+  global_mesh:
+    external: true
