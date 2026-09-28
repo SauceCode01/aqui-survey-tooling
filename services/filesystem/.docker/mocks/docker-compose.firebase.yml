@@ -1,0 +1,11 @@
+services:
+  firebase-emulator:
+    image: spine3/firebase-emulator:latest 
+    environment:
+      - GCP_PROJECT=demo-test-project
+    # NO PORTS HERE! Internal network handles communication.
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/"]
+      interval: 3s
+      timeout: 3s
+      retries: 5
